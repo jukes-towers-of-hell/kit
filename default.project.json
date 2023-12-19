@@ -1,0 +1,74 @@
+{
+  "name": "kit",
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {
+      "$className": "Workspace",
+      "$ignoreUnknownInstances": true,
+      "$path": "src/Workspace",
+      "$properties": {
+        "StreamingEnabled": false,
+        "PhysicsSteppingMethod": "Fixed",
+        "SignalBehavior": "Default"
+      }
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$properties": {
+        "Ambient": [
+          0.5411764705882353,
+          0.5411764705882353,
+          0.5411764705882353
+        ],
+        "OutdoorAmbient": [
+          0.5019607843137255,
+          0.5019607843137255,
+          0.5019607843137255
+        ],
+        "Brightness": 2,
+        "ColorShift_Bottom": [
+          0,
+          0,
+          0
+        ],
+        "ColorShift_Top": [
+          0,
+          0,
+          0
+        ],
+        "EnvironmentDiffuseScale": 0,
+        "EnvironmentSpecularScale": 0,
+        "GlobalShadows": false,
+        "Technology": "Compatibility",
+        "ClockTime": 14,
+        "GeographicLatitude": 41.733,
+        "ExposureCompensation": 0,
+        "FogColor": [
+          0.7529411764705882,
+          0.7529411764705882,
+          0.7529411764705882
+        ],
+        "FogEnd": 100000,
+        "FogStart": 0
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "$properties": {
+        "GameSettingsAvatar": "R6"
+      }
+    },
+    "HttpService": {
+      "$className": "HttpService",
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+    "TextChatService": {
+      "$className": "TextChatService",
+      "$properties": {
+        "ChatVersion": "LegacyChatService"
+      }
+    }
+  }
+}
