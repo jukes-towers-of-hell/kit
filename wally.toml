@@ -1,0 +1,8 @@
+[package]
+name = "synnwave/kit"
+realm = "shared"
+registry = "https://github.com/UpliftGames/wally-index"
+version = "0.1.0"
+
+[dependencies]
+Trove = "sleitnick/trove@1.1.0"

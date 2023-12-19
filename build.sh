@@ -5,28 +5,23 @@ GREEN="\e[32m"
 BLUE="\e[94m"
 DEFAULT="\e[0m"
 
-if [ -e $PLACE_NAME.lock ]
-then
+while [ -e $PLACE_NAME.lock ]
+do
 echo -e "${RED}[WARNING]:${DEFAULT} Place file is open, please close the place before continuing."
 read -p "Press Enter to continue."
 echo
-fi
+done
 
-if [ -e $PLACE_NAME ]
-then
-rm $PLACE_NAME
-fi
-
-echo -e "${BLUE}--=|    AFTMAN    |=--${DEFAULT}"
+echo -e "${BLUE}--=|       AFTMAN      |=--${DEFAULT}"
 aftman install
 echo -e $DEFAULT
 
-echo -e "${BLUE}--=|     ROJO     |=--${GREEN}"
-rojo build --output $PLACE_NAME
+echo -e "${BLUE}--=|       WALLY       |=--${DEFAULT}"
+wally install
 echo -e $DEFAULT
 
-echo -e "${BLUE}--=|     LUNE     |=--${DEFAULT}"
-lune assets/unpack.lua $PLACE_NAME
+echo -e "${BLUE}--=|        ROJO       |=--${GREEN}"
+rojo build --output $PLACE_NAME
 echo -e $DEFAULT
 
 read -p "Do you want to open the place in Roblox Studio? (y/n) " yn

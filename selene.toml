@@ -1,6 +1,4 @@
 std = "roblox"
 [lints]
-unused_variable = "allow"
-parenthese_conditions = "allow"
 multiple_statements = "allow"
-shadowing = "allow"
+parenthese_conditions = "allow"
