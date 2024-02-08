@@ -25,7 +25,7 @@ end
 write(color("blue"))
 linePrint("AFTMAN")
 write(color("reset"))
-spawn("aftman", { "install" }, shellParams)
+spawn("aftman", { "install" }, { shell = true })
 
 -- wally
 write(color("blue"))

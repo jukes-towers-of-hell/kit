@@ -1,9 +1,11 @@
 
 # Getting Started
 
-First, you will need to install Visual Studio Code (or your preferred IDE).
+First, you will need to install the following:
+- [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE),
+- [Rust](https://www.rust-lang.org/), (for command bar stuff.)
+- [Github Desktop](https://desktop.github.com/)
 
-Next, install [Rust](https://www.rust-lang.org/).
 
 Next, install the following extensions for Visual Studio Code.
 - [Rojo](https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo) (You will need this to build the project)
@@ -19,7 +21,7 @@ You will see an option that says "Rojo: Open Menu", Select that option.
 Once you are in the Rojo menu, click Install Rojo.
 
 
-Open up the repository in a terminal window ([CTRL + SHIFT + ` in VSC](https://imgur.com/a/MDQcRLu), [or right click the folder in Explorer then click "Open in Terminal"](https://imgur.com/Mo8jGk9))
+Open up the repository in a terminal window ([CTRL + SHIFT + ` in VSC](https://imgur.com/a/MDQcRLu), [or right click the folder in Explorer then click "Open in Terminal"](https://imgur.com/a/u1KzvLe))
 In the terminal window, type in the following commands:
 ```bash
 aftman install
