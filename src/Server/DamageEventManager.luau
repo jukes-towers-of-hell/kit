@@ -1,7 +1,7 @@
 --!strict
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
-local TYPES = {
+local TYPES: { [string]: number } = {
 	Normal = 5,
 	DoubleDamage = 10,
 	HighDamage = 20,
@@ -20,7 +20,7 @@ function manager:Init()
 		if debounceArray[player.UserId] then return end
 
 		local damageValue: number = if typeof(type) == "number" then type else (TYPES[type] or TYPES.Normal) -- type Types TYPES TYPE TYPE TYPE OH MYIM GOING INSANE
-		if not (damageValue <= 0) then -- no debounce for healing
+		if damageValue > 0 then -- no debounce for healing
 			debounceArray[player.UserId] = true
 			task.delay(0.1, function() debounceArray[player.UserId] = nil end)
 		end
