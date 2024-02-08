@@ -4,12 +4,12 @@
 First, you will need to install Visual Studio Code (or your preferred IDE).
 Next, install [Rust](https://www.rust-lang.org/).
 Next, install the following extensions.
-- https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo (You will need this to build the project)
-- https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.luau-lsp (You will need this to )
-- https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua (You wil need this to format your scripts)
-- https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github
-- https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode (OPTIONAL, extension that can help with autocompleting.)
-- https://marketplace.visualstudio.com/items?itemName=filiptibell.rojo-viewer (OPTIONAL, roblox studio-like explorer view for Rojo.)
+- [Rojo](https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo) (You will need this to build the project)
+- [Luau LSP](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.luau-lsp) (You will need this to )
+- [Stylua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) (You wil need this to format your scripts)
+- [GitHub Issues & Pull Requests](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+- [TabNine](https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode) (OPTIONAL, extension that can help with autocompleting.)
+- [Rojo Viewer](https://marketplace.visualstudio.com/items?itemName=filiptibell.rojo-viewer) (OPTIONAL, roblox studio-like explorer view for Rojo.)
 
 
 Once you have finished installing everything, press F1 on your keyboard and type in "Rojo". 
