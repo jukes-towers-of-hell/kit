@@ -22,10 +22,13 @@ Once you are in the Rojo menu, click Install Rojo.
 
 
 Open up the repository in a terminal window ([CTRL + SHIFT + ` in VSC](https://imgur.com/a/MDQcRLu), [or right click the folder in Explorer then click "Open in Terminal"](https://imgur.com/a/u1KzvLe))
+
 In the terminal window, type in the following commands:
 ```bash
 aftman install
 lune setup
 ```
+
+
 
 You are now done with the Getting Started guide. You can now go back to the [README](./README.md) and build the place.
