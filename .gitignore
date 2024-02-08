@@ -11,3 +11,6 @@
 
 # Wally Packages
 /Packages
+
+# other stuff
+/.vscode
