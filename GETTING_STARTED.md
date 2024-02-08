@@ -18,7 +18,7 @@ Next, install the following extensions for Visual Studio Code.
 
 Once you have finished installing everything, press F1 on your keyboard and type in "Rojo". 
 You will see an option that says "Rojo: Open Menu", Select that option. 
-Once you are in the Rojo menu, click Install Rojo.
+Once you are in the Rojo menu, click [Install Rojo](https://imgur.com/a/wHIT5bO).
 
 
 Open up the repository in a terminal window ([CTRL + SHIFT + ` in VSC](https://imgur.com/a/MDQcRLu), [or right click the folder in Explorer then click "Open in Terminal"](https://imgur.com/a/u1KzvLe))
