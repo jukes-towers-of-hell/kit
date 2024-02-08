@@ -1,4 +1,5 @@
 std = "roblox"
 [lints]
+incorrect_standard_library_use = "allow"
 multiple_statements = "allow"
 parenthese_conditions = "allow"

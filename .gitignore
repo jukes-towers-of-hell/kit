@@ -7,3 +7,6 @@
 
 # Luau LSP Sourcemap
 /sourcemap.json
+
+# Wally Packages
+/Packages
