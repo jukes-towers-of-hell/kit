@@ -2,8 +2,8 @@
 # Getting Started
 
 First, you will need to install the following:
-- [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE),
-- [Rust](https://www.rust-lang.org/), (for command bar stuff.)
+- [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE)
+- [Rust](https://www.rust-lang.org/) (for command bar stuff.)
 - [Github Desktop](https://desktop.github.com/)
 
 
