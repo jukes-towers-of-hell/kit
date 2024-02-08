@@ -1,0 +1,21 @@
+owner: personal
+environments:
+  - label: production
+    branches: [main]
+    targetAccess: private
+
+target:
+  experience:
+    configuration:
+      genre: all
+      playableDevices: [computer]
+      enableStudioAccessToApis: true
+      avatarType: r6
+    places:
+      start:
+        file: kit.rbxl
+        configuration:
+          name: JToH Kit - Rescripted
+          maxPlayerCount: 10
+          description: |
+            W.I.P

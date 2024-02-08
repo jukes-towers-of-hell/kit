@@ -1,0 +1,49 @@
+[inputs."assets/kit_assets/textures/button/button.png"]
+hash = "0764f36ee1c377c0b6cd75457cfeff67df6c803898cfb5b992019f1ebdf518b4"
+id = 16281096933
+packable = false
+
+[inputs."assets/kit_assets/textures/button/circular_button.png"]
+hash = "89d9ebf2e1e0289db96352ae21dac404e5a923a2b4007eb26b3dfa5069b850ed"
+id = 16281097091
+packable = false
+
+[inputs."assets/kit_assets/textures/button/circular_button_side.png"]
+hash = "65f67325d660eb55b70eb9518fafc5a943d84d662d25582396dd1b613a9eeb97"
+id = 16281097224
+packable = false
+
+[inputs."assets/kit_assets/textures/circle.png"]
+hash = "ed79c887b9804985b05e218eae8ab282bb5a146e019872d9ce33b3fc230f5b87"
+id = 16281097357
+packable = false
+
+[inputs."assets/kit_assets/textures/diamond.png"]
+hash = "4ab1ff6d13f229973cff9bd8ffec66f71e0d89211d70b2506690484f9ea2cd60"
+id = 16281097493
+packable = false
+
+[inputs."assets/kit_assets/textures/forcefield_circle.png"]
+hash = "d39b05d29a8fac62824bf4b708f41fa07fd1c6d3f77696fead97b7d3c527d0d5"
+id = 16281097587
+packable = false
+
+[inputs."assets/kit_assets/textures/killbricks/double.png"]
+hash = "968bb17c23a2b6e3f6e28125612b0d7099844bfa8625aa416fbae0665d0ea758"
+id = 16281097673
+packable = false
+
+[inputs."assets/kit_assets/textures/killbricks/kills.png"]
+hash = "bba7e53c32315f66f1bae1374de227a33f5c00e4e6a9d1479f1f5864cbd7de2d"
+id = 16281097791
+packable = false
+
+[inputs."assets/kit_assets/textures/killbricks/ouch.png"]
+hash = "3305c473f357add36370840722c1f6d74f96f773d72f9a2d6e3fa6c939ae9fea"
+id = 16281097938
+packable = false
+
+[inputs."assets/kit_assets/textures/pushing_platform.png"]
+hash = "e47af78d9011a637e90f593094a14baef70277ac4a1c4c3f4ad231d820c6d34a"
+id = 16281098078
+packable = false

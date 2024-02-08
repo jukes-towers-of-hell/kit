@@ -1,0 +1,7 @@
+name = "tarmac"
+
+[[inputs]]
+codegen = true
+codegen-base-path = "assets"
+codegen-path = "assets/published-assets.luau"
+glob = "assets/kit_assets/textures/**/*.png"
