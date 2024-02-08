@@ -9,7 +9,7 @@
       "$properties": {
         "StreamingEnabled": false,
         "PhysicsSteppingMethod": "Fixed",
-        "SignalBehavior": "Default"
+        "SignalBehavior": "Immediate"
       }
     },
     "Lighting": {
@@ -71,6 +71,9 @@
       "$className": "ServerScriptService",
       "Server": {
         "$path": "src/Server"
+      },
+      "Music": {
+        "$path": "src/MusicModule.rbxm"
       }
     },
     "HttpService": {

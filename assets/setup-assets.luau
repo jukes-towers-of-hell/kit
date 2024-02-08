@@ -18,12 +18,9 @@ return function(FILE_NAME: string)
 
 	do -- Replace asset strings
 		local ASSETS = require("published-assets")
-		local PREFIX = "$kit_assets"
+		local KIT_VERSION = require("kit-version")
 
-		local function isValidPrefix(dir: string): boolean return (dir:sub(1, PREFIX:len()) == PREFIX) end
-		local function getAssetFromDirectory(dir: string): string -- EXAMPLE: "$kit_assets/textures/pushing_platform"
-			dir = dir:sub(PREFIX:len() + 2) -- remove image prefix
-
+		local function getAssetFromDirectory(dir: string): string -- EXAMPLE: "textures/pushing_platform"
 			local currentDir = ASSETS.kit_assets
 			for _, nextDir in dir:split("/") do
 				if typeof(currentDir) == "table" and currentDir[nextDir] ~= nil then -- look at the next directory, switch the current directory if it exists
@@ -31,7 +28,7 @@ return function(FILE_NAME: string)
 				end
 			end
 
-			return (if typeof(currentDir) == "string" then currentDir else "")
+			return (if typeof(currentDir) == "string" then currentDir else dir)
 		end
 
 		write(color("blue"))
@@ -47,12 +44,29 @@ return function(FILE_NAME: string)
 			Sound = "SoundId",
 		}
 
-		for _, part in game:GetService("Workspace"):GetDescendants() do
+		local workspace = game:GetService("Workspace")
+		for _, part in workspace:GetDescendants() do
 			local propertyToSet: string = validInstanceSet[part.ClassName]
-			if typeof(propertyToSet) == "string" and isValidPrefix(part[propertyToSet]) then
-				part[propertyToSet] = getAssetFromDirectory(part[propertyToSet])
+			if part:GetAttribute("asset_directory") ~= nil and typeof(propertyToSet) == "string" then
+				part[propertyToSet] = getAssetFromDirectory(part:GetAttribute("asset_directory"))
+				part:SetAttribute("asset_directory", "")
 			end
 		end
+
+		-- set kit version --
+		print("Setting kit version...")
+		local clientObjects = workspace.Kit.ClientSidedObjects
+		clientObjects:SetAttribute("KitVersion", KIT_VERSION.Kit)
+
+		for _, clientObject in clientObjects:GetChildren() do
+			local objectVersion = KIT_VERSION.ClientObjects[clientObject.Name]
+			if not objectVersion then continue end
+
+			clientObject:SetAttribute("ObjectVersion", objectVersion)
+		end
+
+		game:GetService("StarterPlayer").StarterPlayerScripts.Client:SetAttribute("KitVersion", KIT_VERSION.Kit)
+		---------------------
 
 		print("Serializing & Writing to file...")
 		local newPlaceFile = roblox.serializePlace(game)
