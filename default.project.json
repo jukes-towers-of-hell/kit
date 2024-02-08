@@ -56,6 +56,21 @@
       "$className": "StarterPlayer",
       "$properties": {
         "GameSettingsAvatar": "R6"
+      },
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Client": {
+          "$path": "src/Client",
+          "Packages": {
+            "$path": "Packages"
+          }
+        }
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Server": {
+        "$path": "src/Server"
       }
     },
     "HttpService": {
