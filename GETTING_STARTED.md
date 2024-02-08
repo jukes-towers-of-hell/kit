@@ -2,8 +2,8 @@
 # Getting Started
 
 First, you will need to install the following:
-- [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE)
-- [Rust](https://www.rust-lang.org/) (for command bar stuff.)
+- [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE, though, you'll have to find the same plugins for your chosen IDE.)
+- [Rust](https://www.rust-lang.org/) (for terminal commands)
 - [Github Desktop](https://desktop.github.com/)
 
 
@@ -17,7 +17,7 @@ Next, install the following extensions for Visual Studio Code.
 
 
 Once you have finished installing everything, press F1 on your keyboard and type in "Rojo". 
-You will see an option that says "Rojo: Open Menu", Select that option. 
+You will see an option that says ["Rojo: Open Menu"](https://imgur.com/a/nCwNQ3O), Select that option. 
 Once you are in the Rojo menu, click [Install Rojo](https://imgur.com/a/wHIT5bO).
 
 
