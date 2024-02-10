@@ -15,11 +15,12 @@ Next, install the following extensions for Visual Studio Code.
 - [TabNine](https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode) (OPTIONAL, extension that can help with autocompleting.)
 - [Rojo Viewer](https://marketplace.visualstudio.com/items?itemName=filiptibell.rojo-viewer) (OPTIONAL, roblox studio-like explorer view for Rojo.)
 
+Once you have finished installing everything, Open up Github Desktop and clone this repository.
 
-Once you have finished installing everything, press F1 on your keyboard and type in "Rojo". 
+Open the repository in VSC and press F1 on your keyboard and type in "Rojo". 
 You will see an option that says ["Rojo: Open Menu"](https://imgur.com/a/nCwNQ3O), Select that option. 
 Once you are in the Rojo menu, click [Install Rojo](https://imgur.com/a/wHIT5bO).
-
+(If you're having trouble with this step, create a blank folder and open it in VSC and install Rojo. Once you have installed rojo on that folder, go back to the repository folder and try this step again then continue.)
 
 Open up the repository in a terminal window ([CTRL + SHIFT + ` in VSC](https://imgur.com/a/MDQcRLu), [or right click the folder in Explorer then click "Open in Terminal"](https://imgur.com/a/u1KzvLe))
 

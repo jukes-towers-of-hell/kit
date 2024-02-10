@@ -11,3 +11,6 @@ To build the place from scratch, use:
 ```bash
 lune run build
 ```
+
+# Kit Plans
+Go to the [plans file](./PLANS.md) to see what has been finished, what needs to be finished, and plans for future things.
