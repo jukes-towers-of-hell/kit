@@ -35,14 +35,17 @@ function manager:Init()
 
 			-- New TouchScript implementation
 
-			local function evaluatePlatform(platform): boolean
+			local function evaluatePlatform(platform: BasePart): boolean
 				local evaluated = true
-				if platform.Parent.Parent.Name == "Beat Blocks" and not platform.CanCollide then evaluated = false end
+				--if platform.Parent.Parent.Name == "Beat Blocks" and not platform.CanCollide then evaluated = false end
 
-				local activatedValue = platform:FindFirstChild("Activated")
+				local activatedValue: Instance? = platform:FindFirstChild("Activated")
 				if platform.Name == "ButtonActivatedPlatform" and not activatedValue and not platform.CanCollide then -- not sure if some BAPs have the "Activated" value?
 					evaluated = false
-				elseif platform.Name == "ButtonActivatedPlatform" and not (activatedValue and activatedValue.Value) then
+				elseif
+					platform.Name == "ButtonActivatedPlatform"
+					and not (activatedValue and activatedValue:IsA("BoolValue") and activatedValue.Value)
+				then
 					evaluated = false
 				end
 
