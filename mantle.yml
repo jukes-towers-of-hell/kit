@@ -12,7 +12,7 @@ target:
       enableStudioAccessToApis: true
       avatarType: r6
     assets:
-      - assets/rbxassets/Sounds/*/**
+      - assets/kit_assets/sounds/*/**
     places:
       start:
         file: kit.rbxl

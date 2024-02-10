@@ -6,14 +6,16 @@ local roblox = require("@lune/roblox")
 local spawn, write, color, prompt = process.spawn, stdio.write, stdio.color, stdio.prompt
 local shellParams = { shell = true, stdio = "forward", stdin = "forward" }
 
-return function(FILE_NAME: string)
+return function(FILE_NAME: string, doNotRequest: boolean?)
 	-- Tarmac Image Assets
-	if prompt("confirm", "Would you like to upload image assets to Roblox?") then
-		spawn("tarmac", {
-			"sync",
-			"--target roblox",
-			"--retry 3",
-		}, shellParams)
+	if not doNotRequest then
+		if prompt("confirm", "Would you like to upload image assets to Roblox?") then
+			spawn("tarmac", {
+				"sync",
+				"--target roblox",
+				"--retry 3",
+			}, shellParams)
+		end
 	end
 
 	do -- Replace asset strings

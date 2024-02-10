@@ -1,0 +1,21 @@
+name: Deploy
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build-and-deploy:
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: ok-nick/setup-aftman@v0.4.2
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Build project
+          run: lune run build.luau true
+
+        - name: Deploy project
+          run: mantle deploy --environment production
+          env:
+            ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}

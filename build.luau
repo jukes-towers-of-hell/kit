@@ -3,6 +3,8 @@ local process = require("@lune/process")
 local stdio = require("@lune/stdio")
 local FILE_NAME = "kit.rbxl"
 
+local args = process.args
+
 local spawn, write, color, prompt = process.spawn, stdio.write, stdio.color, stdio.prompt
 local shellParams = { shell = true, stdio = "forward", stdin = "forward" }
 
@@ -46,5 +48,5 @@ write(color("reset"))
 write(color("blue"))
 linePrint("ASSETS")
 write(color("reset"))
-require("assets/setup-assets")(FILE_NAME)
+require("assets/setup-assets")(FILE_NAME, args[1])
 print()
