@@ -64,6 +64,9 @@
           "Packages": {
             "$path": "Packages"
           }
+        },
+        "PlayerModule": {
+          "$path": "src/PlayerModule.rbxm"
         }
       }
     },

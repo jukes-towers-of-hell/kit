@@ -1,0 +1,7 @@
+{
+    "className": "Sound",
+    "properties": {
+        "SoundId": "rbxasset://sounds//electronicpingshort.wav",
+        "Volume": 0.3
+    }
+}

@@ -3,16 +3,26 @@
 
 -- CharacterManager by @synnwave
 
-local players = game:GetService("Players")
+local players: Players = game:GetService("Players")
+local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local localPlayer = players.LocalPlayer :: Player
 
 local manager = {}
 
-function manager:Init()
-	local LOCAL_PLAYER_COLLISIONGROUP = "Player"
-	local OTHER_PLAYER_COLLISIONGROUP = "OtherPlayers"
+local VALID_HEALTHBRICKS: { [string]: string | number } = { -- NOTE: Maybe change this to numbers instead of their string names?
+	kills = "Normal",
+	double = "DoubleDamage",
+	ouch = "HighDamage",
+	instakills = "Instakill",
+	heals = 0,
+}
 
-	local damageEvent = game:GetService("ReplicatedStorage"):WaitForChild("DamageEvent") :: RemoteEvent
+local LOCAL_PLAYER_COLLISIONGROUP = "Player"
+local OTHER_PLAYER_COLLISIONGROUP = "OtherPlayers"
+
+function manager:Init()
+	local damageEvent = replicatedStorage:WaitForChild("DamageEvent") :: RemoteEvent
 
 	local function onPlayerAdded(player: Player)
 		local function onCharacterAdded(character: Model)
@@ -34,29 +44,30 @@ function manager:Init()
 			if not isLocalPlayer then return end -- The code below will only run for the local player !
 
 			-- New TouchScript implementation
+			local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+			humanoid.Touched:Connect(function(touchingPart: BasePart, hitPart: BasePart)
+				if hitPart.Name == "Part" then return end -- is there a reason for this check i don't know actualyl but im gonna keep it here
+				if humanoid.Health <= 0 then return end
 
-			local function evaluatePlatform(platform: BasePart): boolean
-				local evaluated = true
-				--if platform.Parent.Parent.Name == "Beat Blocks" and not platform.CanCollide then evaluated = false end
+				local isActivated: any = touchingPart:GetAttribute("Activated")
+				local isActive: boolean = if typeof(isActivated) == "boolean" then isActivated else true
+				if not isActive then return end
 
-				local activatedValue: Instance? = platform:FindFirstChild("Activated")
-				if platform.Name == "ButtonActivatedPlatform" and not activatedValue and not platform.CanCollide then -- not sure if some BAPs have the "Activated" value?
-					evaluated = false
-				elseif
-					platform.Name == "ButtonActivatedPlatform"
-					and not (activatedValue and activatedValue:IsA("BoolValue") and activatedValue.Value)
-				then
-					evaluated = false
+				for identifier, value in VALID_HEALTHBRICKS do
+					if touchingPart:FindFirstChild(identifier) then -- old killbricks . . .
+						damageEvent:FireServer(value)
+						break
+					end
+
+					local hasAttribute: any = touchingPart:GetAttribute(identifier)
+					if hasAttribute ~= nil then
+						damageEvent:FireServer(if typeof(hasAttribute) == "number" then hasAttribute else value)
+						-- if the attribute is a number then give the server that number instead of the normal value
+						-- allows for custom killbrick values !!
+						break
+					end
 				end
-
-				return evaluated
-			end
-
-			local humanoid: Instance = character:WaitForChild("Humanoid")
-			if humanoid and humanoid:IsA("Humanoid") then
-				humanoid.Touched:Connect(function(touchingPart: BasePart, hitPart: BasePart) --TODO: @synnwave GO FINISH IT
-				end)
-			end
+			end)
 		end
 
 		pcall(onCharacterAdded, player.Character or player.CharacterAdded:Wait())

@@ -1,5 +1,5 @@
 --!strict
-local replicatedStorage = game:GetService("ReplicatedStorage")
+local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TYPES: { [string]: number } = {
 	Normal = 5,
@@ -11,7 +11,7 @@ local TYPES: { [string]: number } = {
 local manager = {}
 
 function manager:Init()
-	local remote: RemoteEvent = replicatedStorage:FindFirstChild("DamageEvent") or Instance.new("RemoteEvent")
+	local remote = (replicatedStorage:FindFirstChild("DamageEvent") or Instance.new("RemoteEvent")) :: RemoteEvent
 	remote.Name = "DamageEvent"
 	remote.Parent = replicatedStorage
 

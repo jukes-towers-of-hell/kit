@@ -1,6 +1,6 @@
 --!strict
 -- by @synnwave
-local physicsService = game:GetService("PhysicsService")
+local physicsService: PhysicsService = game:GetService("PhysicsService")
 
 type collisionGroup = {
 	COLLIDES: { string },
