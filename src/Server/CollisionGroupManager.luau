@@ -1,5 +1,6 @@
 --!strict
--- by @synnwave
+-- CollisionGroupManager by @synnwave
+
 local physicsService: PhysicsService = game:GetService("PhysicsService")
 
 type collisionGroup = {

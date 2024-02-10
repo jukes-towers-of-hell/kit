@@ -3,7 +3,8 @@
 ## Scripts
 - [x] Server Side Scripts (collision groups & damage event) (done, by @synnwave)
 - [ ] LocalPartScript Revamp
-- [ ] TouchScript Revamp (almost done)
+- [x] TouchScript Revamp (done, by @synnwave)
+- [x] Flip script revamp (done, by @synnwave)
 
 ## Client Objects
 - [x] Base Client Objects (client objects w/o scripts)
