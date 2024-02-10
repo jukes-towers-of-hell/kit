@@ -3,9 +3,10 @@
 
 local userInputService: UserInputService = game:GetService("UserInputService")
 local debris: Debris = game:GetService("Debris")
-
 local players: Players = game:GetService("Players")
 local localPlayer = players.LocalPlayer :: Player
+
+local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
 
 local manager = {}
 
@@ -42,7 +43,6 @@ function manager:Init()
 		end
 	end
 
-	local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
 	userInputService.InputBegan:Connect(function(inputObject: InputObject, gameProcessedEvent: boolean)
 		if gameProcessedEvent then return end
 		if not table.find(VALID_KEYCODES, inputObject.KeyCode) then return end

@@ -11,6 +11,8 @@ target:
       playableDevices: [computer]
       enableStudioAccessToApis: true
       avatarType: r6
+    assets:
+      - assets/rbxassets/Sounds/*/**
     places:
       start:
         file: kit.rbxl

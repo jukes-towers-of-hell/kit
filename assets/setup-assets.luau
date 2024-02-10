@@ -42,10 +42,11 @@ return function(FILE_NAME: string)
 			ParticleEmitter = "Texture",
 			Beam = "Texture",
 			Sound = "SoundId",
+			StringValue = "Value",
 		}
 
 		local workspace = game:GetService("Workspace")
-		for _, part in workspace:GetDescendants() do
+		for _, part in game:GetDescendants() do
 			local propertyToSet: string = validInstanceSet[part.ClassName]
 			if part:GetAttribute("asset_directory") ~= nil and typeof(propertyToSet) == "string" then
 				part[propertyToSet] = getAssetFromDirectory(part:GetAttribute("asset_directory"))

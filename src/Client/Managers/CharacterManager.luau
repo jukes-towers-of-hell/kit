@@ -18,10 +18,9 @@ local VALID_DAMAGEBRICKS: { [string]: string | number } = { -- NOTE: Maybe chang
 
 local LOCAL_PLAYER_COLLISIONGROUP = "Player"
 local OTHER_PLAYER_COLLISIONGROUP = "OtherPlayers"
+local damageEvent = replicatedStorage:WaitForChild("DamageEvent") :: RemoteEvent
 
 function manager:Init()
-	local damageEvent = replicatedStorage:WaitForChild("DamageEvent") :: RemoteEvent
-
 	local function onPlayerAdded(player: Player)
 		local function onCharacterAdded(character: Model)
 			if not character then return end
