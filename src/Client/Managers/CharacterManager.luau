@@ -1,6 +1,4 @@
 --!strict
---# selene: allow(if_same_then_else)
-
 -- CharacterManager by @synnwave
 
 local players: Players = game:GetService("Players")
@@ -10,7 +8,7 @@ local localPlayer = players.LocalPlayer :: Player
 
 local manager = {}
 
-local VALID_HEALTHBRICKS: { [string]: string | number } = { -- NOTE: Maybe change this to numbers instead of their string names?
+local VALID_DAMAGEBRICKS: { [string]: string | number } = { -- NOTE: Maybe change this to numbers instead of their string names?
 	kills = "Normal",
 	double = "DoubleDamage",
 	ouch = "HighDamage",
@@ -53,7 +51,7 @@ function manager:Init()
 				local isActive: boolean = if typeof(isActivated) == "boolean" then isActivated else true
 				if not isActive then return end
 
-				for identifier, value in VALID_HEALTHBRICKS do
+				for identifier, value in VALID_DAMAGEBRICKS do
 					if touchingPart:FindFirstChild(identifier) then -- old killbricks . . .
 						damageEvent:FireServer(value)
 						break
