@@ -20,9 +20,9 @@ jobs:
           env:
             ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
         
-        - name: Update mantle state
-          uses: test-room-7/action-update-file@v1
-          with:
-              file-path: .mantle-state.yml
-              commit-msg: Update Mantle State
-              github-token: ${{ secrets.GITHUB_TOKEN }}    
+        - name: Push mantle state
+          run: |
+              git config --global user.name 'synnwave'
+              git config --global user.email 'synnwave@users.noreply.github.com'
+              git commit -am "Github Actions Mantle State"
+              git push
