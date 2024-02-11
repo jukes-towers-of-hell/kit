@@ -10,6 +10,7 @@ return {
 			circle = "rbxassetid://16281097357",
 			diamond = "rbxassetid://16281097493",
 			forcefield_circle = "rbxassetid://16281097587",
+			gradient = "rbxassetid://16324487413",
 			killbricks = {
 				double = "rbxassetid://16281097673",
 				kills = "rbxassetid://16281097791",

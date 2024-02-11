@@ -6,9 +6,11 @@ local roblox = require("@lune/roblox")
 local spawn, write, color, prompt = process.spawn, stdio.write, stdio.color, stdio.prompt
 local shellParams = { shell = true, stdio = "forward", stdin = "forward" }
 
-return function(FILE_NAME: string, doNotRequest: boolean?)
+return function(FILE_NAME: string, doNotRequest: string?)
+	if doNotRequest == "skip" then return end
+
 	-- Tarmac Image Assets
-	if not doNotRequest then
+	if doNotRequest ~= "true" then
 		if prompt("confirm", "Would you like to upload image assets to Roblox?") then
 			spawn("tarmac", {
 				"sync",
@@ -52,7 +54,6 @@ return function(FILE_NAME: string, doNotRequest: boolean?)
 			local propertyToSet: string = validInstanceSet[part.ClassName]
 			if part:GetAttribute("asset_directory") ~= nil and typeof(propertyToSet) == "string" then
 				part[propertyToSet] = getAssetFromDirectory(part:GetAttribute("asset_directory"))
-				part:SetAttribute("asset_directory", "")
 			end
 		end
 
