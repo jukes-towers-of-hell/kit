@@ -16,13 +16,8 @@ jobs:
           run: lune run build.luau true
 
         - name: Deploy project
-          run: mantle deploy --environment production
           env:
-            ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
-        
-        - name: Push mantle state
-          run: |
-              git config --global user.name 'github-actions[bot]'
-              git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-              git commit -am "Github Actions Mantle State"
-              git push
+            UID: 5628492917  # Universe ID
+            PID: 16315273730 # Place ID
+            API_KEY: ${{ secrets.OPENCLOUD }} 
+          run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f kit.rbxl
