@@ -94,7 +94,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 		if typeof(repositoryScript) ~= "table" then continue end
 		if not repositoryScript.LoadOnStart then continue end
 		currentTrove:Add(task.spawn(
-			repositoryScript.new,
+			repositoryScript.new, -- i'm not using trove:construct because i need this to be spawned
 			{
 				trove = currentTrove,
 				communicators = communicators,
@@ -105,8 +105,9 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 
 	-- load requested scripts
 	for _, scriptInfo in modulesToRun do
-		if not scriptRepository[scriptInfo.script] then continue end -- shouldn't be possible
 		local repositoryScript = scriptRepository[scriptInfo.script]
+		if not repositoryScript then continue end -- shouldn't be possible
+
 		currentTrove:Add(task.spawn(function()
 			local variables: _T.Variables = {
 				trove = currentTrove,
@@ -124,5 +125,5 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 	end
 end
 
-getRepositoryScripts() -- Cache the repository scripts
+task.spawn(getRepositoryScripts) -- Cache the repository scripts into the memory
 return manager
