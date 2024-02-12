@@ -2,7 +2,7 @@
 
 ## Scripts
 - [x] Server Side Scripts (collision groups & damage event) (done, by @synnwave)
-- [ ] LocalPartScript Revamp
+- [x] LocalPartScript Revamp
 - [x] TouchScript Revamp (done, by @synnwave)
 - [x] Flip script revamp (done, by @synnwave)
 

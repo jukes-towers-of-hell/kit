@@ -12,6 +12,14 @@
         "SignalBehavior": "Immediate"
       }
     },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$ignoreUnknownInstances": true,
+      "$path": "src/Shared",
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
     "Lighting": {
       "$className": "Lighting",
       "$properties": {
@@ -60,10 +68,7 @@
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "Client": {
-          "$path": "src/Client",
-          "Packages": {
-            "$path": "Packages"
-          }
+          "$path": "src/Client"
         },
         "PlayerModule": {
           "$path": "src/PlayerModule.rbxm"

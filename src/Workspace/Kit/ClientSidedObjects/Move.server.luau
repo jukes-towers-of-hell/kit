@@ -1,3 +1,3 @@
-script.Parent.Parent = game:GetService("ReplicatedStorage")
+script.Parent.Parent = game:GetService("ServerStorage")
 task.wait()
 script:Destroy()

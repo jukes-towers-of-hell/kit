@@ -6,7 +6,7 @@ local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage"
 
 local localPlayer = players.LocalPlayer :: Player
 
-local manager = {}
+local manager = { hasInitialized = false }
 
 local VALID_DAMAGEBRICKS: { [string]: string | number } = { -- NOTE: Maybe change this to numbers instead of their string names?
 	kills = "Normal",
@@ -21,6 +21,9 @@ local OTHER_PLAYER_COLLISIONGROUP = "OtherPlayers"
 local damageEvent = replicatedStorage:WaitForChild("DamageEvent") :: RemoteEvent
 
 function manager:Init()
+	if manager.hasInitialized then return end
+	manager.hasInitialized = true
+
 	local function onPlayerAdded(player: Player)
 		local function onCharacterAdded(character: Model)
 			if not character then return end

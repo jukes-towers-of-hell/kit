@@ -8,9 +8,12 @@ local localPlayer = players.LocalPlayer :: Player
 
 local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
 
-local manager = {}
+local manager = { hasInitialized = false }
 
 function manager:Init()
+	if manager.hasInitialized then return end
+	manager.hasInitialized = true
+
 	local function activateFlip()
 		local character: Model? = localPlayer.Character
 		if not character then return end
