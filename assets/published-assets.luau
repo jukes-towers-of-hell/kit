@@ -17,6 +17,7 @@ return {
 				ouch = "rbxassetid://16281097938",
 			},
 			pushing_platform = "rbxassetid://16281098078",
+			up_arrow = "rbxassetid://16348903637",
 		},
 	},
 }

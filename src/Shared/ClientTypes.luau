@@ -11,6 +11,7 @@ export type Variables = {
 	},
 	parent: Instance?,
 	clientObjects: Instance,
+	shared: { [any]: any },
 }
 
 export type LightingConfiguration = {

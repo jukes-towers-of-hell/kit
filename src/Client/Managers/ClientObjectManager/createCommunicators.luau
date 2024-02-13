@@ -1,4 +1,5 @@
 --!strict
+-- this is only in a seperate module because i don't want the ClientObjectManager to look cluttered
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local _T = require(replicatedStorage.ClientTypes)

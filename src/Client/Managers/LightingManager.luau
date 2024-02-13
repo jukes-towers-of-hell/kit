@@ -18,10 +18,21 @@ local CONFIGURABLE_PROPS: { [string]: { string } } = {
 	["DepthOfFieldEffect"] = { "FarIntensity", "FocusDistance", "InFocusRadius", "NearIntensity" },
 }
 
+local PRESET_PROPERTIES: { [string]: { [string]: any } } = {
+	-- roblox has preset properties when using Instance.new, this table is for setting those properties to their defaults
+	["BlurEffect"] = { Size = 0 },
+	["DepthOfFieldEffect"] = { NearIntensity = 0, FarIntensity = 0 },
+	["BloomEffect"] = { Intensity = 1, Size = 24, Threshold = 2 },
+}
+
 local function getInstanceProperty(instance: any, prop: string): any -- lazy function (for readability)
 	local result
 	pcall(function() result = instance[prop] end)
 	return result
+end
+
+local function setInstanceProperty(instance: any, prop: string, value: any) -- again
+	pcall(function() instance[prop] = value end)
 end
 
 local defaultProperties = {}
@@ -43,15 +54,11 @@ function manager:Init()
 				lightingEffect.Parent = lighting
 			end
 
-			if lightingEffect:IsA("BlurEffect") then
-				lightingEffect.Size = 0
-			elseif lightingEffect:IsA("DepthOfFieldEffect") then
-				lightingEffect.FarIntensity = 0
-				lightingEffect.NearIntensity = 0
-			elseif lightingEffect:IsA("BloomEffect") then
-				lightingEffect.Intensity = 1
-				lightingEffect.Size = 24
-				lightingEffect.Threshold = 2
+			local presetProperties: { [string]: any }? = PRESET_PROPERTIES[lightingEffect.ClassName]
+			if presetProperties then
+				for prop: string, value: any in presetProperties do
+					setInstanceProperty(lightingEffect, prop, value)
+				end
 			end
 
 			for _, prop: string in properties do
@@ -76,13 +83,13 @@ function manager:ChangeLighting(config: _T.LightingConfiguration)
 		else config.Configuration
 
 	local propertyTable = {}
-	for property: string, value: any in currentConfiguration do
+	for prop: string, value: any in currentConfiguration do
 		if typeof(value) == "string" or typeof(value) == "boolean" then
-			pcall(function() (lightingInstance :: any)[property] = value end)
+			setInstanceProperty(lightingInstance, prop, value)
 			continue
 		end
 
-		propertyTable[property] = value
+		propertyTable[prop] = value
 	end
 
 	tweenService:Create(lightingInstance, currentTweenInfo, propertyTable):Play()

@@ -52,3 +52,8 @@ packable = false
 hash = "e47af78d9011a637e90f593094a14baef70277ac4a1c4c3f4ad231d820c6d34a"
 id = 16281098078
 packable = false
+
+[inputs."assets/kit_assets/textures/up_arrow.png"]
+hash = "1c8ed31f358bc793e859d839b0ea49891f17532e98599b4f96358e6b41937d73"
+id = 16348903637
+packable = false

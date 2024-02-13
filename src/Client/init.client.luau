@@ -1,8 +1,5 @@
 --!strict
 
-local players: Players = game:GetService("Players")
-local localPlayer = players.LocalPlayer :: Player
-
 local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 local requestRemote = replicatedStorage:WaitForChild("RequestCOFolder") :: RemoteFunction
 

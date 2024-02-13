@@ -14,6 +14,7 @@ function Template.new(scope: _T.Variables)
 			local clientObjects = scope.clientObjects
 			local trove = scope.trove
 			local communicators = scope.communicators
+			local shared = scope.shared
 			```
 		- All connections/threads/instances need be added to the Trove 
 			An example of this would be: ```lua
@@ -24,7 +25,10 @@ function Template.new(scope: _T.Variables)
 		- It is advised to use strict typing mode (--!strict on the top of your script) to make sure there aren't any silly mistakes when writing your code.
 		- Do not use script.Parent, as it will not work. Instead use: scope.parent
 		- if LoadOnStart is turned on, scope.parent will not exist, and instead you will need to use scope.clientObjects which will always exist.
-		- If working with Custom Client Objects, please make a folder named "RepositoryScripts" in Workspace.Kit and place any of your new repository scripts there.
+		- If working with Custom Client Objects, Pushbox Scripts, Turret Scripts:
+			please make a folder named "RepositoryScripts" in Workspace.Kit and place any of your new repository scripts there.
+	
+		Once you've read all of this please remove this comment block !!
 	]]
 end
 
