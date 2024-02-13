@@ -55,6 +55,14 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			end
 		end
 
+		local function addToQueue(loadFromRepo: string, part: Instance) -- i don't like repeating code .
+			local currentRepoScript = scriptRepository[loadFromRepo]
+			if currentRepoScript == nil then return end
+			if not (typeof(currentRepoScript) == "table" and currentRepoScript.LoadOnStart) then
+				table.insert(modulesToRun, { instance = part, script = loadFromRepo })
+			end
+		end
+
 		local function applyPart(part: Instance)
 			if part:IsA("BasePart") then
 				if part:FindFirstChild("invisible") or part:FindFirstChild("Invisible") or part:GetAttribute("Invisible") then
@@ -72,12 +80,8 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			end
 
 			local loadFromRepo: string? = part:GetAttribute("LoadFromRepository")
-			if typeof(loadFromRepo) == "string" and scriptRepository[loadFromRepo] ~= nil then
-				local currentRepoScript = scriptRepository[loadFromRepo]
-				if not (typeof(currentRepoScript) == "table" and currentRepoScript.LoadOnStart) then
-					table.insert(modulesToRun, { instance = part, script = loadFromRepo })
-				end
-			end
+			if typeof(loadFromRepo) == "string" then addToQueue(loadFromRepo, part) end
+			if part.Name == "LoadFromRepository" and part:IsA("StringValue") then addToQueue(part.Value, part) end
 		end
 
 		if applySelf then
@@ -89,8 +93,15 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			if firstLoad then object.Parent = clientParts end
 			currentTrove:Add(object)
 
+			if object:GetAttribute("DoNotApply") then continue end
 			applyPart(object)
 			for _, descendant: Instance in object:GetDescendants() do
+				if descendant:GetAttribute("DoNotApply") then continue end
+				if firstLoad then
+					if descendant.Name == "Pushbox" then continue end -- Pushboxes will use the applyPart function later
+					if descendant:FindFirstAncestor("Pushbox") then continue end
+				end
+
 				applyPart(descendant)
 			end
 		end

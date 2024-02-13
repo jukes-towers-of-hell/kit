@@ -23,6 +23,11 @@ hash = "4ab1ff6d13f229973cff9bd8ffec66f71e0d89211d70b2506690484f9ea2cd60"
 id = 16281097493
 packable = false
 
+[inputs."assets/kit_assets/textures/down_arrow.png"]
+hash = "a0cacf4842b8403085749a1de4f689d8dab2ec1df684bb4c1d728677614ec901"
+id = 16350606160
+packable = false
+
 [inputs."assets/kit_assets/textures/forcefield_circle.png"]
 hash = "d39b05d29a8fac62824bf4b708f41fa07fd1c6d3f77696fead97b7d3c527d0d5"
 id = 16281097587
@@ -51,9 +56,4 @@ packable = false
 [inputs."assets/kit_assets/textures/pushing_platform.png"]
 hash = "e47af78d9011a637e90f593094a14baef70277ac4a1c4c3f4ad231d820c6d34a"
 id = 16281098078
-packable = false
-
-[inputs."assets/kit_assets/textures/up_arrow.png"]
-hash = "1c8ed31f358bc793e859d839b0ea49891f17532e98599b4f96358e6b41937d73"
-id = 16348903637
 packable = false

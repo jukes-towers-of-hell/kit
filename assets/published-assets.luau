@@ -9,6 +9,7 @@ return {
 			},
 			circle = "rbxassetid://16281097357",
 			diamond = "rbxassetid://16281097493",
+			down_arrow = "rbxassetid://16350606160",
 			forcefield_circle = "rbxassetid://16281097587",
 			gradient = "rbxassetid://16324487413",
 			killbricks = {
@@ -17,7 +18,6 @@ return {
 				ouch = "rbxassetid://16281097938",
 			},
 			pushing_platform = "rbxassetid://16281098078",
-			up_arrow = "rbxassetid://16348903637",
 		},
 	},
 }
