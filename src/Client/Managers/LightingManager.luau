@@ -1,5 +1,5 @@
 --!strict
--- LightingManager by @synnwave
+-- LightingManager by @Gammaaaaa & @synnwave
 
 local manager = { hasInitialized = false }
 

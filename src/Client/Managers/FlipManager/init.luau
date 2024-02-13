@@ -1,5 +1,5 @@
 --!strict
--- FlipManager by @synnwave
+-- FlipManager by Jukereise & @synnwave
 
 local userInputService: UserInputService = game:GetService("UserInputService")
 local debris: Debris = game:GetService("Debris")
