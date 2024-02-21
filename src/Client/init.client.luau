@@ -5,10 +5,12 @@ local requestRemote = replicatedStorage:WaitForChild("RequestCOFolder") :: Remot
 
 -- Initialize Managers
 local managers = script.Managers
+require(managers.UtilityManager):Init()
 local clientObjectManager = require(managers.ClientObjectManager)
 require(managers.LightingManager):Init()
 require(managers.CharacterManager):Init()
 require(managers.FlipManager):Init()
+task.spawn(function() require(managers.EffectGuiHandler):Init() end)
 
 -- Handle client object loading with ClientObjectManager
 local currentFolder: Folder = requestRemote:InvokeServer()

@@ -54,6 +54,7 @@ return function(FILE_NAME: string, doNotRequest: string?)
 			local propertyToSet: string = validInstanceSet[part.ClassName]
 			if part:GetAttribute("asset_directory") ~= nil and typeof(propertyToSet) == "string" then
 				part[propertyToSet] = getAssetFromDirectory(part:GetAttribute("asset_directory"))
+				part:SetAttribute("asset_directory", part[propertyToSet])
 			end
 		end
 

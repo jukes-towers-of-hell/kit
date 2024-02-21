@@ -15,10 +15,7 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$ignoreUnknownInstances": true,
-      "$path": "src/Shared",
-      "Packages": {
-        "$path": "Packages"
-      }
+      "$path": "src/Shared"
     },
     "Lighting": {
       "$className": "Lighting",
@@ -60,6 +57,12 @@
         "FogStart": 0
       }
     },
+    "StarterGui": {
+      "$className": "StarterGui",
+      "EffectGUI": {
+        "$path": "src/EffectGUI.rbxm"
+      }
+    },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "$properties": {
@@ -68,7 +71,10 @@
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "Client": {
-          "$path": "src/Client"
+          "$path": "src/Client",
+          "Packages": {
+            "$path": "Packages"
+          }
         },
         "PlayerModule": {
           "$path": "src/PlayerModule.rbxm"

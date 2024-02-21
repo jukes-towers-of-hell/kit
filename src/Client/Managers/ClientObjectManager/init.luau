@@ -4,14 +4,18 @@
 local manager = {}
 
 local root = script:FindFirstAncestor("Client")
-local Repository = root:FindFirstChild("Repository")
+local Repository = root.Repository
+local Packages = root.Packages
 
 local replicatedStorage = game:GetService("ReplicatedStorage") -- don't give this a type or else it will throw a warning for _T
-local Packages = replicatedStorage.Packages
 local _T = require(replicatedStorage.ClientTypes)
 local Trove = require(Packages.Trove)
+local Signal = require(Packages.Signal)
+local RequestFunctions = require(script.RequestFunctions)
 
-local createCommunicators = require(script.createCommunicators)
+local Managers = root:FindFirstChild("Managers")
+local Utility: _T.Utility = require(Managers.UtilityManager)
+local lightingManager = require(Managers.LightingManager)
 
 local function getRepositoryScripts(overrideRepository: Instance?)
 	local repository = {}
@@ -37,11 +41,14 @@ if not clientParts:IsDescendantOf(workspace) then -- this is probably such a sil
 end
 
 function manager:LoadClientObjects(clientObjectFolder: Folder)
-	local currentTrove = Trove.new()
-	local communicators = createCommunicators(currentTrove)
+	local currentTrove: _T.Trove = Trove.new()
 	local sharedCache = {} -- this table will be shared across all repository scripts, passed in as a reference
+	local communicators = {
+		event = currentTrove:Construct(Signal) :: _T.Signal,
+		request = currentTrove:Construct(RequestFunctions) :: _T.RequestFunctions,
+	}
 
-	-- currentTrove:Connect(localPlayer.CharacterRemoving, function() currentTrove:Destroy() end)
+	-- currentTrove:Connect(localPlayer.CharacterRemoving, function() currentTrove:Clean() end)
 	-- remember to uncomment this because it'l be important in JToH
 
 	local scriptRepository = getRepositoryScripts(workspace:FindFirstChild("RepositoryScripts", true))
@@ -65,23 +72,20 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 
 		local function applyPart(part: Instance)
 			if part:IsA("BasePart") then
-				if part:FindFirstChild("invisible") or part:FindFirstChild("Invisible") or part:GetAttribute("Invisible") then
+				if (Utility.checkConfig(part, "invisible") ~= nil) or (Utility.checkConfig(part, "Invisible") ~= nil) then
 					part.Transparency = 1
 				end
 
-				part.CollisionGroup = "ClientObjects"
-				local setCollisionGroupValue: Instance? = part:FindFirstChild("SetCollisionGroup")
-				if setCollisionGroupValue and setCollisionGroupValue:IsA("StringValue") then
-					part.CollisionGroup = setCollisionGroupValue.Value
-				end
-
-				local setCollisionGroupAttribute: string? = part:GetAttribute("SetCollisionGroup")
-				if typeof(setCollisionGroupAttribute) == "string" then part.CollisionGroup = setCollisionGroupAttribute end
+				local setCollisionGroup = Utility.checkConfig(part, "SetCollisionGroup")
+				if typeof(setCollisionGroup) ~= "string" then setCollisionGroup = "ClientObjects" end
+				part.CollisionGroup = setCollisionGroup
 			end
 
 			local loadFromRepo: string? = part:GetAttribute("LoadFromRepository")
-			if typeof(loadFromRepo) == "string" then addToQueue(loadFromRepo, part) end
-			if part.Name == "LoadFromRepository" and part:IsA("StringValue") then addToQueue(part.Value, part) end
+			if typeof(loadFromRepo) == "string" then addToQueue(loadFromRepo, part) end -- load repository script from Attribute
+			if (part.Name == "LoadFromRepository" and part.Parent) and part:IsA("StringValue") then -- load repository script from String Value
+				addToQueue(part.Value, part.Parent)
+			end
 		end
 
 		if applySelf then
@@ -98,8 +102,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			for _, descendant: Instance in object:GetDescendants() do
 				if descendant:GetAttribute("DoNotApply") then continue end
 				if firstLoad then
-					if descendant.Name == "Pushbox" then continue end -- Pushboxes will use the applyPart function later
-					if descendant:FindFirstAncestor("Pushbox") then continue end
+					if Utility.isPushbox(descendant) or Utility.isTurret(descendant) then continue end -- Pushboxes & Turrets will use the applyPart function later
 				end
 
 				applyPart(descendant)
@@ -118,6 +121,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 					clientObjects = clientParts,
 					parent = scriptInfo.instance,
 					shared = sharedCache,
+					utility = Utility,
 				}
 
 				if typeof(repositoryScript) == "table" then
@@ -130,11 +134,16 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 	end
 
 	scanParts(clientObjectFolder, true, false)
-	currentTrove:Connect(communicators.event.Event, function(type: string, ...)
+	currentTrove:Connect(communicators.event, function(type: string, ...) -- listen to events
 		if type == "apply-part" then
 			local path: Instance = ...
 			if typeof(path) ~= "Instance" then return end
 			scanParts(path, false, true)
+		end
+
+		if type == "change-lighting" then -- change lighting on request
+			local config: _T.LightingConfiguration = ...
+			lightingManager:ChangeLighting(config)
 		end
 	end)
 end

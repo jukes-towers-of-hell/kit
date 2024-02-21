@@ -14,7 +14,17 @@ function manager:Init()
 	function remote.OnServerInvoke(player: Player)
 		local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
 		local coFolder = folder:Clone()
-		coFolder.Parent = playerGui
+
+		-- Since this is the kit place, we need the folder to persist in the player's PlayerGui,
+		-- Roblox automatically removes any instance with ResetOnSpawn turned on.
+		-- Since this is a folder, we need to place it inside a GUI Instance. I'll be using a SurfaceGui to do this.
+		local dummyParent: SurfaceGui = Instance.new("SurfaceGui")
+		dummyParent.Enabled = false
+		dummyParent.ResetOnSpawn = false
+		dummyParent.Name = "\0"
+
+		coFolder.Parent = dummyParent
+		dummyParent.Parent = playerGui
 
 		return coFolder
 	end
