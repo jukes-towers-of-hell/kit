@@ -77,12 +77,7 @@ return function(scope: _T.Variables)
 		timerTrove:AttachToInstance(textLabel)
 		timerTrove:Connect(textLabel.Changed, function() screenText.Text = textLabel.Text end)
 		timerTrove:Add(function()
-			if screenText.Parent and screenText.Parent.Name == "TimerList" then
-				screenText.Name = "__DESTROY__" -- New timer list detected; the new timer list will handle the rest if we set the name
-			else
-				screenText:Destroy()
-			end
-
+			screenText:Destroy()
 			currentTrove:Remove(timerTrove)
 		end)
 	end
