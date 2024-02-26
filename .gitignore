@@ -16,3 +16,4 @@ wally.lock
 # other stuff
 /.vscode
 .env
+.build

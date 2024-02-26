@@ -8,8 +8,8 @@
 
 ## Client Objects
 - [x] Base Client Objects (client objects w/o scripts)
-- [ ] idk
-- [ ] idk
+- [x] Conveyor (done, by @synnwave)
+- [x] Button (done, by @synnwave)
 - [ ] idk
 - [ ] idk
 - [ ] idk

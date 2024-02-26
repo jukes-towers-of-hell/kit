@@ -34,6 +34,7 @@ return function(scope: _T.Variables)
 		Color = utility.roundColor(buttonPart.Color),
 		Pressed = currentTrove:Construct(Instance, "BoolValue"), -- basically Instance.new("BoolValue") but it will also get added to the trove
 		ID = utility.generateUID(false, true),
+		TotalPresses = 0,
 	}
 
 	currentButton.Pressed.Parent = button
@@ -50,9 +51,9 @@ return function(scope: _T.Variables)
 	local function getTimerColor(): (Color3, Color3)
 		if not timerTextLabel then return Color3.new(), Color3.new() end
 		local currentColor: Color3 = currentButton.Color
-		if utility.checkConfig(timerTextLabel, "DefaultColor") ~= nil then -- default color
+		if utility.hasTag(timerTextLabel, "DefaultColor") then -- default color
 			return currentColor, Color3.new(1 - currentColor.R, 1 - currentColor.G, 1 - currentColor.B)
-		elseif utility.checkConfig(timerTextLabel, "AlternativeDefaultColor") ~= nil then -- special default color
+		elseif utility.hasTag(timerTextLabel, "AlternativeDefaultColor") then -- special default color
 			return currentColor, utility.subtractHSV(currentColor)
 		end
 
@@ -86,12 +87,11 @@ return function(scope: _T.Variables)
 	-- handle button --
 	local buttonSound: Instance? = buttonPart:FindFirstChild("Press")
 	local debounce = false
-	local totalPresses = 0
 	local originalCFrame = buttonPart.CFrame
 
 	updatePlatforms(false)
 	currentTrove:Connect(currentButton.Pressed:GetPropertyChangedSignal("Value"), function()
-		totalPresses += 1
+		currentButton.TotalPresses += 1
 
 		local isPressed: boolean = currentButton.Pressed.Value
 		local pressedCFrame = originalCFrame * CFrame.new(0, -(utility.checkConfig(configurations, "ButtonPressOffset") or 0.75), 0)
@@ -100,7 +100,9 @@ return function(scope: _T.Variables)
 			then utility.getEnumFromString(utility.checkConfig(configurations, "PressedMaterial"), Enum.Material.Neon)
 			else utility.getEnumFromString(utility.checkConfig(configurations, "UnpressedMaterial"), Enum.Material.Metal)
 
-		if buttonPart.Anchored then utility.tween(buttonPart, 1, { CFrame = if isPressed then pressedCFrame else originalCFrame }) end
+		if buttonPart.Anchored and (not utility.isSequence(button)) then
+			utility.tween(buttonPart, 1, { CFrame = if isPressed then pressedCFrame else originalCFrame })
+		end
 		if isPressed and (buttonSound and buttonSound:IsA("Sound")) then buttonSound:Play() end
 		updatePlatforms()
 
@@ -111,7 +113,7 @@ return function(scope: _T.Variables)
 		if not timerTextLabel then return end
 
 		local textOverride: string = utility.checkConfig(configurations, "TimerText") or ""
-		local savedTotalPresses: number = totalPresses
+		local savedTotalPresses: number = currentButton.TotalPresses
 
 		local timerTrove = currentTrove:Extend()
 		timerTrove:Add(function() currentTrove:Remove(timerTrove) end)
@@ -139,13 +141,13 @@ return function(scope: _T.Variables)
 		) or 0
 
 		timerTrove:Add(function()
-			if totalPresses ~= savedTotalPresses then return end
+			if currentButton.TotalPresses ~= savedTotalPresses then return end
 			currentButton.Pressed.Value = false
 		end)
 
 		local startClock: number = os.clock()
 		timerTrove:Connect(runService.Heartbeat, function()
-			if totalPresses ~= savedTotalPresses then return timerTrove:Clean() end
+			if currentButton.TotalPresses ~= savedTotalPresses then return timerTrove:Clean() end
 
 			local elapsedTime: number = buttonTimer - (os.clock() - startClock)
 			if elapsedTime <= 0 then return timerTrove:Clean() end

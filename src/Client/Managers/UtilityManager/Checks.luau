@@ -14,21 +14,10 @@ local Utility: _T.Utility = require(script.Parent)
 
 local util = {}
 
-function util.isButtonActivatedPlatform(platform: Instance): boolean
-	return platform:IsA("BasePart")
-		and (
-			platform.Name == "ButtonActivatedPlatform"
-			or (platform:FindFirstChild("ButtonActivated") ~= nil or platform:GetAttribute("ButtonActivated"))
-		)
-end
+--[=[
+@within utility
 
-function util.isBalloon(parent: Instance): boolean return parent.Name == "Balloon" end
-function util.isTurret(parent: Instance): boolean return parent.Name == "Bullet" end
-function util.isPushbox(parent: Instance): boolean
-	if typeof(parent) ~= "Instance" then return false end
-	return (parent.Name == "Pushbox") or (parent:FindFirstAncestor("Pushbox") ~= nil) or (parent:FindFirstChild("IsBox") ~= nil)
-end
-
+]=]
 function util.checkConfig(instance: Instance, configName: string): any
 	if typeof(instance) ~= "Instance" or typeof(configName) ~= "string" then return end
 	local foundValue: Instance? = instance:FindFirstChild(configName)
@@ -40,6 +29,68 @@ function util.checkConfig(instance: Instance, configName: string): any
 		else nil
 end
 
+--[=[
+@within utility
+@tag shorthand
+]=]
+function util.hasTag(instance: Instance, tag: string): boolean --
+	return instance:HasTag(tag) or (util.checkConfig(instance, tag) ~= nil)
+end
+
+--[=[
+
+@within utility
+@tag shorthand
+]=]
+function util.isButtonActivatedPlatform(platform: Instance): boolean
+	if typeof(platform) ~= "Instance" then return false end
+	return platform:IsA("BasePart")
+		and (
+			platform.Name == "ButtonActivatedPlatform"
+			or (util.hasTag(platform, "ButtonActivated") or platform:GetAttribute("ButtonActivated"))
+		)
+end
+
+--[=[
+@within utility
+@tag shorthand
+]=]
+function util.isBalloon(parent: Instance): boolean
+	if typeof(parent) ~= "Instance" then return false end
+	return parent.Name == "Balloon"
+end
+
+--[=[
+@within utility
+@tag shorthand
+]=]
+function util.isTurret(parent: Instance): boolean
+	if typeof(parent) ~= "Instance" then return false end
+	return parent.Name == "Bullet"
+end
+
+--[=[
+@within utility
+@tag shorthand
+]=]
+function util.isPushbox(parent: Instance): boolean
+	if typeof(parent) ~= "Instance" then return false end
+	return (parent.Name == "Pushbox") or (parent:FindFirstAncestor("Pushbox") ~= nil) or (util.hasTag(parent, "IsBox"))
+end
+
+--[=[
+@within utility
+@tag shorthand
+]=]
+function util.isSequence(parent: Instance): boolean
+	if typeof(parent) ~= "Instance" then return false end
+	return parent:FindFirstAncestor("Sequencer") ~= nil
+end
+
+--[=[
+@within utility
+
+]=]
 function util.evaluateToucher(part: BasePart, toucher: BasePart, config: Instance?): boolean
 	if not (toucher and toucher.Parent) then return false end
 	local configuration: Instance = config or part

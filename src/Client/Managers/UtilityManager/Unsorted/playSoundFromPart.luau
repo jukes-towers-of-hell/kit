@@ -1,6 +1,11 @@
 --!strict
 local debris: Debris = game:GetService("Debris")
-return function(sound: string | Sound, parent: Instance?, searchFrom: Instance)
+
+--[=[
+@within utility
+
+]=]
+local function playSoundFromPart(sound: string | Sound, parent: Instance?, searchFrom: Instance)
 	local soundToPlay: Instance?
 	if typeof(sound) == "string" and typeof(searchFrom) == "Instance" then
 		-- I really wish there was a way to check which script called this function so that i wouldn't have to use searchFrom every time i call it
@@ -18,3 +23,5 @@ return function(sound: string | Sound, parent: Instance?, searchFrom: Instance)
 		debris:AddItem(clonedSound, clonedSound.TimeLength + 0.25)
 	end
 end
+
+return playSoundFromPart

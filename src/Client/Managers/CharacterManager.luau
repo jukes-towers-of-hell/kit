@@ -8,17 +8,38 @@ local localPlayer = players.LocalPlayer :: Player
 
 local manager = { hasInitialized = false }
 
-local VALID_DAMAGEBRICKS: { [string]: string | number } = { -- NOTE: Maybe change this to numbers instead of their string names?
+manager.VALID_DAMAGEBRICKS = { -- NOTE: Maybe change this to numbers instead of their string names?
 	kills = "Normal",
 	double = "DoubleDamage",
 	ouch = "HighDamage",
 	instakills = "Instakill",
 	heals = 0,
-}
+} :: { [string]: string | number }
 
 local LOCAL_PLAYER_COLLISIONGROUP = "Player"
 local OTHER_PLAYER_COLLISIONGROUP = "OtherPlayers"
 local damageEvent = replicatedStorage:WaitForChild("DamageEvent") :: RemoteEvent
+
+function manager:HandleKillBrick(brick: BasePart) -- this is in a seperate function so i can add easy support for the sequencer
+	local isActivated: any = brick:GetAttribute("Activated")
+	local isActive: boolean = if typeof(isActivated) == "boolean" then isActivated else true
+	if not isActive then return end
+
+	for identifier, value in manager.VALID_DAMAGEBRICKS do
+		if brick:HasTag(identifier) or brick:FindFirstChild(identifier) then -- can't use Utility.hasTag on this because then the code below won't execute!
+			damageEvent:FireServer(value)
+			break
+		end
+
+		local hasAttribute: any = brick:GetAttribute(identifier)
+		if hasAttribute ~= nil then
+			damageEvent:FireServer(if typeof(hasAttribute) == "number" then hasAttribute else value)
+			-- if the attribute is a number then give the server that number instead of the normal value
+			-- allows for custom killbrick values !!
+			break
+		end
+	end
+end
 
 function manager:Init()
 	if manager.hasInitialized then return end
@@ -49,24 +70,7 @@ function manager:Init()
 				if hitPart.Name == "Part" then return end -- is there a reason for this check i don't know actualyl but im gonna keep it here
 				if humanoid.Health <= 0 then return end
 
-				local isActivated: any = touchingPart:GetAttribute("Activated")
-				local isActive: boolean = if typeof(isActivated) == "boolean" then isActivated else true
-				if not isActive then return end
-
-				for identifier, value in VALID_DAMAGEBRICKS do
-					if touchingPart:FindFirstChild(identifier) then -- old killbricks . . .
-						damageEvent:FireServer(value)
-						break
-					end
-
-					local hasAttribute: any = touchingPart:GetAttribute(identifier)
-					if hasAttribute ~= nil then
-						damageEvent:FireServer(if typeof(hasAttribute) == "number" then hasAttribute else value)
-						-- if the attribute is a number then give the server that number instead of the normal value
-						-- allows for custom killbrick values !!
-						break
-					end
-				end
+				manager:HandleKillBrick(touchingPart)
 			end)
 		end
 

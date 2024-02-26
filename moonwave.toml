@@ -1,0 +1,14 @@
+gitRepoUrl = "https://github.com/synnwave/jtoh-kit-overhaul"
+gitSourceBranch = "main"
+
+[[classOrder]]
+classes = ["utility"]
+collapsed = false
+section = "Scope"
+
+[home]
+enabled = true
+includeReadme = false
+
+[docusaurus]
+tagline = "Juke's Towers of Hell Kit V6"

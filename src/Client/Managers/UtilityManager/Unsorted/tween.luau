@@ -1,6 +1,11 @@
 --!strict
 local tweenService: TweenService = game:GetService("TweenService")
-return function( -- long Function ...
+
+--[=[
+@within utility
+@param ... ...
+]=]
+local function tween( -- long Function ...
 	instance: Instance,
 	time: number,
 	goal: { [string]: any },
@@ -8,7 +13,7 @@ return function( -- long Function ...
 	easingDirection: Enum.EasingDirection?,
 	...
 ): Tween
-	local tween: Tween = tweenService:Create(
+	local tweenObject: Tween = tweenService:Create(
 		instance,
 		TweenInfo.new(
 			time,
@@ -18,7 +23,9 @@ return function( -- long Function ...
 		),
 		goal
 	)
-	tween.Completed:Once(function() tween:Destroy() end)
-	tween:Play()
-	return tween
+	tweenObject.Completed:Once(function() tweenObject:Destroy() end)
+	tweenObject:Play()
+	return tweenObject
 end
+
+return tween

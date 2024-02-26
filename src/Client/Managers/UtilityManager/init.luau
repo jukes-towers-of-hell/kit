@@ -1,5 +1,12 @@
 --!strict
 
+--[=[
+@class utility
+@client
+A table of utility functions that can be used to speed up the process of writing repository scripts for client objects.
+
+]=]
+
 local UtilityManager = { _hasInitialized = false }
 function UtilityManager:Init()
 	if UtilityManager._hasInitialized then return UtilityManager end

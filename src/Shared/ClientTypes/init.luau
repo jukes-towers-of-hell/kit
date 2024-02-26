@@ -29,4 +29,16 @@ export type LightingConfiguration = {
 	TweenInfo: TweenInfo?,
 }
 
+-- Repository Types (i can't put them in their own module because they make references to the Variables type)
+
+-- Sequencer --
+export type sequencerActivator = (scope: Variables, sequenceData: sequencerData) -> ()
+export type sequencerData = {
+	canAwait: boolean,
+	instance: PVInstance,
+	activators: { sequencerActivator }?,
+	hasPassed: boolean,
+	groupActivators: { { activators: { sequencerActivator }, data: sequencerData } }?,
+}
+
 return nil

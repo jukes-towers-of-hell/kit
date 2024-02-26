@@ -8,6 +8,7 @@ local lighting: Lighting = game:GetService("Lighting")
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local _T = require(replicatedStorage.ClientTypes)
+local Utility: _T.Utility = require(script:FindFirstAncestor("Client").Managers.UtilityManager)
 
 local DEFAULT_TWEENINFO = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
 local CONFIGURABLE_PROPS: { [string]: { string } } = {
@@ -25,16 +26,6 @@ local PRESET_PROPERTIES: { [string]: { [string]: any } } = {
 	["BloomEffect"] = { Intensity = 1, Size = 24, Threshold = 2 },
 }
 
-local function getInstanceProperty(instance: any, prop: string): any -- lazy function (for readability)
-	local result
-	pcall(function() result = instance[prop] end)
-	return result
-end
-
-local function setInstanceProperty(instance: any, prop: string, value: any) -- again
-	pcall(function() instance[prop] = value end)
-end
-
 local defaultProperties = {}
 function manager:Init()
 	if manager.hasInitialized then return end
@@ -44,7 +35,7 @@ function manager:Init()
 		local defaultPropertyTable: { [string]: any } = {}
 		if effect == "Lighting" then
 			for _, prop: string in properties do
-				defaultPropertyTable[prop] = getInstanceProperty(lighting, prop)
+				defaultPropertyTable[prop] = Utility.getInstanceProperty(lighting, prop)
 			end
 		else
 			local identifier = `LC{effect}`
@@ -57,12 +48,12 @@ function manager:Init()
 			local presetProperties: { [string]: any }? = PRESET_PROPERTIES[lightingEffect.ClassName]
 			if presetProperties then
 				for prop: string, value: any in presetProperties do
-					setInstanceProperty(lightingEffect, prop, value)
+					Utility.setInstanceProperty(lightingEffect, prop, value)
 				end
 			end
 
 			for _, prop: string in properties do
-				defaultPropertyTable[prop] = getInstanceProperty(lightingEffect, prop)
+				defaultPropertyTable[prop] = Utility.getInstanceProperty(lightingEffect, prop)
 			end
 		end
 
@@ -85,7 +76,7 @@ function manager:ChangeLighting(config: _T.LightingConfiguration)
 	local propertyTable = {}
 	for prop: string, value: any in currentConfiguration do
 		if typeof(value) == "string" or typeof(value) == "boolean" then
-			setInstanceProperty(lightingInstance, prop, value)
+			Utility.setInstanceProperty(lightingInstance, prop, value)
 			continue
 		end
 

@@ -1,4 +1,5 @@
 --!strict
+-- https://sleitnick.github.io/RbxUtil/api/Signal/
 type Connection = {
 	Disconnect: (self: Connection) -> (),
 	Destroy: (self: Connection) -> (),
@@ -16,6 +17,7 @@ export type Signal = {
 	Wait: <T...>(self: Signal) -> T...,
 }
 
+-- @synnwave
 export type requestFunction = (...any) -> ...any
 export type RequestFunctions = {
 	Invoke: (self: RequestFunctions, type: string, ...any) -> ...any,

@@ -1,5 +1,6 @@
 --!strict
 
+-- https://sleitnick.github.io/RbxUtil/api/Trove/
 export type Trove = {
 	new: () -> Trove,
 	Extend: (self: Trove) -> Trove,
