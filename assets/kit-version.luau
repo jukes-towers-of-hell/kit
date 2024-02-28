@@ -6,5 +6,7 @@ return {
 	ClientObjects = {
 		-- put client object versions in here ( if needed ! )
 		-- this will allow scripts to see what client object version is used, so we can add backwards compatibility for the scripts in the script repository
+		Button = 6.00,
+		Sequencer = 1.00,
 	},
 }

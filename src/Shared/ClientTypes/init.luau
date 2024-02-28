@@ -29,6 +29,7 @@ export type LightingConfiguration = {
 	TweenInfo: TweenInfo?,
 }
 
+-------------------------------------------------------------------------------------------------------------
 -- Repository Types (i can't put them in their own module because they make references to the Variables type)
 
 -- Sequencer --

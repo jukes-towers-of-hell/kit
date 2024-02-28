@@ -2,19 +2,19 @@
 
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
+export type activatorData = {
+	check: (scope: _T.Variables, sequenceData: _T.sequencerData) -> boolean,
+	activate: _T.sequencerActivator,
+	priority: number?,
+}
+
 local activatorFunctions = script.ActivatorFunctions
 return function(scope: _T.Variables)
 	local shared, communicators = scope.shared, scope.communicators
 	if shared.sequencer_cache == nil then
 		local cacheReference = {
 			sequencers = {} :: { [Model]: () -> () },
-			activators = {} :: {
-				[string]: {
-					check: (scope: _T.Variables, sequenceData: _T.sequencerData) -> boolean,
-					activate: (scope: _T.Variables, sequenceData: _T.sequencerData) -> (),
-					priority: number?,
-				},
-			},
+			activators = {} :: { [string]: activatorData },
 		}
 
 		shared.sequencer_cache = cacheReference
@@ -27,9 +27,18 @@ return function(scope: _T.Variables)
 		-- Handle Activators --
 
 		-- add in sequencer activators --
-		cacheReference.activators["Killbricks"] = require(activatorFunctions.Killbricks)
-		cacheReference.activators["Sequencers"] = require(activatorFunctions.Sequencers)
-		cacheReference.activators["Sequence Groups"] = require(activatorFunctions.SequenceGroups)
+		function cacheReference.addActivator(name: string, data: activatorData)
+			if cacheReference.activators[name] ~= nil then return end
+			if not (typeof(data) == "table" and typeof(data.check) == "function" and typeof(data.activate) == "function") then
+				return
+			end
+
+			cacheReference.activators[name] = data
+		end
+
+		cacheReference.addActivator("Killbricks", require(activatorFunctions.Killbricks))
+		cacheReference.addActivator("Sequencers", require(activatorFunctions.Sequencers))
+		cacheReference.addActivator("SequenceGroups", require(activatorFunctions.SequenceGroups))
 
 		-- fetch activators function --
 		function cacheReference.fetchActivators(sequenceData: _T.sequencerData)

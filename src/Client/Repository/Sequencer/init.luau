@@ -1,4 +1,7 @@
 --!strict
+-- Sequencer, by @synnwave
+
+-->insert-repository-warning<--
 
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 local runService: RunService = game:GetService("RunService")
@@ -32,8 +35,8 @@ return function(scope: _T.Variables)
 	local loopAmount = utility.assureValueType(utility.checkConfig(configuration, "LoopAmount"), 0) + 1
 	local loopDelay = utility.assureValueType(utility.checkConfig(configuration, "LoopDelay"), 0)
 	local speed = -math.abs(utility.assureValueType(utility.checkConfig(configuration, "Speed"), 1))
-
 	local visualize = utility.assureValueType(utility.checkConfig(configuration, "Visualize"), false)
+	utility.applyPartOptimizations(sequencerBase)
 	sequencerBase.Transparency = 1
 
 	local beam: Beam
@@ -80,12 +83,12 @@ return function(scope: _T.Variables)
 	local function runSequence()
 		if not hasFetchedActivators then -- fetch activators when it's time to actually run the sequence (just to be safe), we'll only do this once tho
 			hasFetchedActivators = true
-
 			for index, sequencePart in sequenceData do
-				sequencePart.activators = fetchActivators(sequencePart)
-				if sequencePart.activators and #sequencePart.activators <= 0 and sequencePart.instance.Name ~= "EndPoint" then
+				local currentActivators = fetchActivators(sequencePart)
+				if #currentActivators <= 0 and sequencePart.instance.Name ~= "EndPoint" then
 					sequenceData[index] = nil -- remove from table because this sequence part has no purpose
-					continue
+				else
+					sequencePart.activators = currentActivators
 				end
 			end
 		end
@@ -98,9 +101,10 @@ return function(scope: _T.Variables)
 
 		local currentTrove = trove:Extend()
 		currentTrove:Add(function()
-			sequencerBase:PivotTo(startingPosition)
 			trove:Remove(currentTrove)
+			sequencerBase:PivotTo(startingPosition)
 			setColor(STOPPED_COLOR)
+			currentSequenceData = nil :: any
 		end)
 
 		local sequenceCount = #currentSequenceData
@@ -135,9 +139,7 @@ return function(scope: _T.Variables)
 				end
 			end
 
-			if passed >= sequenceCount then
-				runID += 1
-			end
+			if passed >= sequenceCount then currentTrove:Clean() end
 		end)
 
 		return runID
@@ -158,16 +160,20 @@ return function(scope: _T.Variables)
 		debounce = false
 	end
 
+	-- add into cache to allow for sequencer activated sequencers --
 	shared.sequencer_cache.sequencers[sequencer] = sequenceWrapper
 
-	local toggle: Instance? = sequencer:FindFirstChild("Toggle")
-	if toggle and toggle:IsA("BasePart") then
-		sequencer.PrimaryPart = toggle
-		trove:Connect(toggle.Touched, function(toucher: BasePart)
-			if not utility.evaluateToucher(toggle, toucher, configuration) then return end
+	-- check for toggle parts --
+	for _, part: Instance in sequencer:GetDescendants() do
+		if part:IsDescendantOf(sequence) then continue end
+		if not part:IsA("BasePart") then continue end
+		if part.Name ~= "Toggle" then continue end
 
-			local buttonActivated: boolean = utility.checkConfig(toggle, "Activated")
+		trove:Connect(part.Touched, function(toucher: BasePart)
+			if not utility.evaluateToucher(part, toucher, configuration) then return end
+			local buttonActivated: boolean = utility.checkConfig(part, "Activated")
 			if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+
 			sequenceWrapper()
 		end)
 	end

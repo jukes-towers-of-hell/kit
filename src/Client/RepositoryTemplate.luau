@@ -18,7 +18,7 @@ function Template.new(scope: _T.Variables)
 		- if LoadOnStart is turned on, scope.parent will not exist, and instead you will need to use scope.clientObjects which will always exist.
 		- If working with Custom Client Objects, Pushbox Scripts, Turret Scripts:
 			please make a folder named "RepositoryScripts" in Workspace.Kit and place any of your new repository scripts there.
-		- Feel free to remove the _T variable if you don't like it lol
+		- Feel free to remove the _T variable if you don't like it lol, it's only here for autocompletion purposes
 
 		Once you've read all of this please remove this comment block !!
 	]]
