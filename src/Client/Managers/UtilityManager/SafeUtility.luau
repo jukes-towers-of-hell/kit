@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 -- Safe Utility --
 -- (these are mainly shorthand functions lol)
 -- Functions for doing operations safely, such as:

@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 --[=[
 @within utility
 @prop tableUtil table

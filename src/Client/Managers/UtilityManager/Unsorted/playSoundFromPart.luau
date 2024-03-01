@@ -1,4 +1,7 @@
 --!strict
+
+-->insert-corescript-warning<--
+
 local debris: Debris = game:GetService("Debris")
 
 --[=[

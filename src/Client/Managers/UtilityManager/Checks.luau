@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 local players: Players = game:GetService("Players")
 local localPlayer = players.LocalPlayer :: Player
 

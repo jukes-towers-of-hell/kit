@@ -1,6 +1,8 @@
 --!strict
 -- FlipManager by Jukereise & @synnwave
 
+-->insert-corescript-warning<--
+
 local userInputService: UserInputService = game:GetService("UserInputService")
 local debris: Debris = game:GetService("Debris")
 local players: Players = game:GetService("Players")

@@ -1,9 +1,11 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 return {
 	priority = nil,
-	check = function(scope: _T.Variables, sequenceData: _T.sequencerData)
+	check = function(scope: _T.Variables, sequenceData: any)
 		if sequenceData.instance.Name ~= "SequenceGroup" then return false end
 
 		local groupData = {}
@@ -20,7 +22,7 @@ return {
 		return canContinue
 	end,
 
-	activate = function(scope: _T.Variables, sequenceData: _T.sequencerData)
+	activate = function(scope: _T.Variables, sequenceData: any)
 		local activators = sequenceData.groupActivators
 		if not activators then return end
 

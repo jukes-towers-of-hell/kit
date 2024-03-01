@@ -1,4 +1,7 @@
 --!strict
+
+-->insert-corescript-warning<--
+
 local serverStorage: ServerStorage = game:GetService("ServerStorage")
 local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 

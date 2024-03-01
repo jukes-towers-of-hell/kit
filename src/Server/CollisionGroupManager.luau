@@ -1,6 +1,8 @@
 --!strict
 -- CollisionGroupManager by @synnwave
 
+-->insert-corescript-warning<--
+
 local physicsService: PhysicsService = game:GetService("PhysicsService")
 
 type collisionGroup = {

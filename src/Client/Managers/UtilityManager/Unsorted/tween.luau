@@ -1,4 +1,7 @@
 --!strict
+
+-->insert-corescript-warning<--
+
 local tweenService: TweenService = game:GetService("TweenService")
 
 --[=[

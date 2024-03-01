@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 -- Color Utility --
 -- Functions for color operations, such as:
 -- rounding a color (for buttons, pushboxes, etc)

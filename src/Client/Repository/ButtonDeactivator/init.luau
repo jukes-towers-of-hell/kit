@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 local sequencerManager = require(script.SequencerManager)
 

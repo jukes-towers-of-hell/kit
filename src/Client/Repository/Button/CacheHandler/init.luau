@@ -1,6 +1,8 @@
 --!strict
 -- this is being split into two scripts because i don't want the main script to be cluttered
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
 local PART_BUFFER = 64 -- every 64 button platforms activated will wait a frame to prevent *some* lag

@@ -2,6 +2,8 @@
 -- BindableFunction replacement that recieves/returns variables as references and not copies
 -- by @synnwave
 
+-->insert-corescript-warning<--
+
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local _T = require(replicatedStorage.ClientTypes)
 

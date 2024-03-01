@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 local httpService: HttpService = game:GetService("HttpService")
 
 --[=[

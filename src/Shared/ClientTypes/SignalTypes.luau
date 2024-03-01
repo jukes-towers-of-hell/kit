@@ -1,4 +1,7 @@
 --!strict
+
+-->insert-corescript-warning<--
+
 -- https://sleitnick.github.io/RbxUtil/api/Signal/
 type Connection = {
 	Disconnect: (self: Connection) -> (),

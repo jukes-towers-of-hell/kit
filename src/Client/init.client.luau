@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 local requestRemote = replicatedStorage:WaitForChild("RequestCOFolder") :: RemoteFunction
 

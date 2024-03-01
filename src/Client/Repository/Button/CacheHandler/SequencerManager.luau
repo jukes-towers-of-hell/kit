@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 return function(scope: _T.Variables)
 	local shared, utility = scope.shared, scope.utility
@@ -15,7 +17,7 @@ return function(scope: _T.Variables)
 		-- NUMBER 1 PRIORITY: BUTTON ACTIVATED PLATFORMS
 		sequencerCache.addActivator("ButtonActivatedPlatforms", {
 			priority = 1,
-			check = function(_, sequenceData: _T.sequencerData)
+			check = function(_, sequenceData)
 				if not sequenceData.instance:IsA("BasePart") then return false end
 				local isButtonActivated = utility.isButtonActivatedPlatform(sequenceData.instance)
 				if isButtonActivated then
@@ -25,7 +27,7 @@ return function(scope: _T.Variables)
 
 				return isButtonActivated
 			end,
-			activate = function(_, sequenceData: _T.sequencerData)
+			activate = function(_, sequenceData)
 				local platform = sequenceData.instance
 				repeat
 					task.wait()
@@ -35,7 +37,7 @@ return function(scope: _T.Variables)
 
 		-- Buttons (no priority) --
 		sequencerCache.addActivator("Buttons", {
-			check = function(_, sequenceData: _T.sequencerData)
+			check = function(_, sequenceData)
 				if not sequenceData.instance:FindFirstChild("ButtonPart") then return false end -- not worth doing any more checks
 
 				local inCache = shared.button_cache.Buttons[sequenceData.instance] ~= nil
@@ -43,7 +45,7 @@ return function(scope: _T.Variables)
 				return inCache
 			end,
 
-			activate = function(_, sequenceData: _T.sequencerData)
+			activate = function(_, sequenceData)
 				local cache = shared.button_cache.Buttons[sequenceData.instance]
 				if not cache then return end -- what?
 				if cache.Pressed.Value then return end

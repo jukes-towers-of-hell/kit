@@ -1,6 +1,8 @@
 --!strict
 -- DamageEventManager by @synnwave
 
+-->insert-corescript-warning<--
+
 local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TYPES: { [string]: number } = {

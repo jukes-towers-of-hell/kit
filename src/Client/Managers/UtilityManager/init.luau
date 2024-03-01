@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 --[=[
 @class utility
 @client

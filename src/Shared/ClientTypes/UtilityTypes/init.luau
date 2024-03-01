@@ -1,6 +1,6 @@
 --!strict
 
-local TableUtilTypes = require(script.TableUtilTypes)
+-->insert-corescript-warning<--
 
 export type Utility = {
 	-- Checks --
@@ -35,9 +35,6 @@ export type Utility = {
 		easingDirection: Enum.EasingDirection?,
 		...any
 	) -> Tween,
-
-	-- TableUtil --
-	tableUtil: TableUtilTypes.TableUtil,
 }
 
 return nil

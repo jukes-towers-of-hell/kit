@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-corescript-warning<--
+
 -- the purpose of this function is to set properties for parts that aren't gonna be used to boost performance a little
 return function(part: Instance?)
 	if not (part and part:IsA("BasePart")) then return end

@@ -6,24 +6,6 @@ local roblox = require("@lune/roblox")
 local spawn, write, color, prompt = process.spawn, stdio.write, stdio.color, stdio.prompt
 local shellParams = { shell = true, stdio = "forward", stdin = "forward" }
 
--- warning message that will be inserted into scripts if requested
-local WARNING_KEY = "%-%->insert%-repository%-warning<%-%-" -->insert-repository-warning<--
-local WARNING_MESSAGE = `--[[\n{[[
-⚠️ WARNING - PLEASE READ! ⚠️
-Please do NOT make any script changes to any repository script that is in this folder.
-If you need to make a script edit or want to create a custom repository script, please follow the instructions below:
-
-Create a folder named "RepositoryScripts" in workspace under the Kit folder, and place all of your needed repository scripts there. 
-PLEASE NOTE: If you are submitting to JToH, It is important that you include this folder in your submission model, 
-			or else any script edits/custom scripts will NOT work in game.
-If you are making script edits, please add the following comment "--@edit" to where you did the edit. It will help us a lot!
-
-PS: There is a RepositoryScript template under StarterPlayer.StarterPlayerScripts.Client.RepositoryTemplate if you ever need it.
-
-
-Once you have read this, and followed all the steps correctly, feel free to remove this comment block.
-]]}]]`
-
 return function(FILE_NAME: string, doNotRequest: string?)
 	if doNotRequest == "skip" then return end
 
@@ -41,6 +23,7 @@ return function(FILE_NAME: string, doNotRequest: string?)
 	do -- Replace asset strings
 		local ASSETS = require("published-assets")
 		local KIT_VERSION = require("kit-version")
+		local WARNING_MESSAGES = require("warning-messages")
 
 		local function getAssetFromDirectory(dir: string): string -- EXAMPLE: "textures/pushing_platform"
 			local currentDir = ASSETS.kit_assets
@@ -89,12 +72,19 @@ return function(FILE_NAME: string, doNotRequest: string?)
 		end
 		---------------------
 
-		-- insert repository warning message --
+		-- insert warning messages --
 		local clientDirectory: Instance = game:GetService("StarterPlayer").StarterPlayerScripts.Client
+		clientDirectory:SetAttribute("KitVersion", KIT_VERSION.Kit)
 
-		for _, currentScript in clientDirectory:GetDescendants() do
-			if not (currentScript:IsA("ModuleScript") or currentScript:IsA("LocalScript")) then continue end
-			currentScript.Source = currentScript.Source:gsub(WARNING_KEY, WARNING_MESSAGE)
+		for _, currentScript in game:GetDescendants() do
+			if not (currentScript:IsA("ModuleScript") or currentScript:IsA("BaseScript")) then continue end
+			local finalSource = currentScript.Source
+			for warningKey: string, warningMessage: string in WARNING_MESSAGES do
+				finalSource = finalSource:gsub(warningKey, warningMessage)
+			end
+
+			if currentScript.Source == finalSource then continue end
+			currentScript.Source = finalSource
 		end
 		------------------------------------
 

@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 return function(scope: _T.Variables, deactivator: BasePart, deactivate: () -> ())
 	local shared, utility = scope.shared, scope.utility
@@ -16,7 +18,7 @@ return function(scope: _T.Variables, deactivator: BasePart, deactivate: () -> ()
 		local sequencerCache = shared.sequencer_cache
 		if not sequencerCache then return end
 		sequencerCache.addActivator("ButtonDeactivator", {
-			check = function(_, sequenceData: _T.sequencerData)
+			check = function(_, sequenceData)
 				if not sequenceData.instance:IsA("BasePart") then return false end
 				local isDeactivator = scope.utility.checkConfig(sequenceData.instance, "LoadFromRepository") == "ButtonDeactivator"
 				if isDeactivator then utility.applyPartOptimizations(sequenceData.instance) end
@@ -24,7 +26,7 @@ return function(scope: _T.Variables, deactivator: BasePart, deactivate: () -> ()
 				return isDeactivator
 			end,
 
-			activate = function(_, sequenceData: _T.sequencerData)
+			activate = function(_, sequenceData)
 				local deactivatorFunc = shared.buttonDeactivator_cache[sequenceData.instance]
 				if typeof(deactivatorFunc) == "function" then task.spawn(deactivatorFunc) end
 			end,

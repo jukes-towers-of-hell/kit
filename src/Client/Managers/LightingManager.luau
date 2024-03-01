@@ -1,6 +1,8 @@
 --!strict
 -- LightingManager by @Gammaaaaa & @synnwave
 
+-->insert-corescript-warning<--
+
 local manager = { hasInitialized = false }
 
 local tweenService: TweenService = game:GetService("TweenService")
@@ -71,7 +73,14 @@ function manager:ChangeLighting(config: _T.LightingConfiguration)
 	local currentTweenInfo: TweenInfo = config.TweenInfo or DEFAULT_TWEENINFO
 	local currentConfiguration: { [string]: any } = if config.Configuration == "Default"
 		then defaultProperties[config.Type]
-		else config.Configuration
+		elseif typeof(config.Configuration) == "table" then config.Configuration
+		else {}
+
+	if typeof(config.Configuration) == "Instance" and CONFIGURABLE_PROPS[config.Configuration.ClassName] ~= nil then
+		for _, prop in CONFIGURABLE_PROPS[config.Configuration.ClassName] do
+			currentConfiguration[prop] = Utility.getInstanceProperty(config.Configuration, prop)
+		end
+	end
 
 	local propertyTable = {}
 	for prop: string, value: any in currentConfiguration do

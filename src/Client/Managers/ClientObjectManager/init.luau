@@ -1,6 +1,8 @@
 --!strict
 -- ClientObjectManager by @synnwave
 
+-->insert-corescript-warning<--
+
 local manager = {}
 
 local root = script:FindFirstAncestor("Client")
@@ -17,14 +19,24 @@ local Managers = root:FindFirstChild("Managers")
 local Utility: _T.Utility = require(Managers.UtilityManager)
 local lightingManager = require(Managers.LightingManager)
 
-local function getRepositoryScripts(overrideRepository: Instance?)
+local DEBUG = workspace:GetAttribute("DEBUG_ENABLED")
+
+local function getRepositoryScripts(scope: _T.Variables?, overrideRepository: Instance?)
 	local repository = {}
 	local function scanForRepository(repo: Instance)
+		local repoPath = repo:GetFullName()
 		for _, repoScript: Instance in repo:GetDescendants() do
 			if not repoScript:IsA("ModuleScript") then continue end
 			if repoScript.Parent and repoScript.Parent:IsA("ModuleScript") then continue end -- do not load any submodules
-			if repository[repoScript.Name] then continue end
-			repository[repoScript.Name] = require(repoScript) :: any
+
+			local path = repoScript:GetFullName():gsub(repoPath, ""):sub(2) -- crazy...
+			if repository[path] then continue end
+
+			local required = require(repoScript) :: any
+			if (typeof(required) == "table" and typeof(required.init) == "function") and (scope ~= nil) then
+				required = required.init(scope)
+			end
+			repository[path] = required
 		end
 	end
 
@@ -41,6 +53,8 @@ if not clientParts:IsDescendantOf(workspace) then -- this is probably such a sil
 end
 
 function manager:LoadClientObjects(clientObjectFolder: Folder)
+	if typeof(clientObjectFolder:GetAttribute("KitVersion")) ~= "number" then warn(`[{script.Name}]: kit version not specified`) end
+
 	local currentTrove: _T.Trove = Trove.new()
 	local sharedCache = {} -- this table will be shared across all repository scripts, passed in as a reference
 	local communicators = {
@@ -51,7 +65,18 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 	-- currentTrove:Connect(localPlayer.CharacterRemoving, function() currentTrove:Clean() end)
 	-- remember to uncomment this because it'l be important in JToH
 
-	local scriptRepository = getRepositoryScripts(workspace:FindFirstChild("RepositoryScripts", true))
+	local scriptRepository
+	local scope: _T.Variables = {
+		trove = currentTrove,
+		communicators = communicators,
+		clientObjects = clientParts,
+		shared = sharedCache,
+		utility = Utility,
+		repository = scriptRepository,
+		debug = DEBUG,
+	}
+
+	scriptRepository = getRepositoryScripts(scope, workspace:FindFirstChild("RepositoryScripts", true))
 	local function scanParts(path: Instance, firstLoad: boolean, applySelf: boolean?)
 		local modulesToRun: { { instance: Instance?, script: string } } = {}
 		if firstLoad then
@@ -64,7 +89,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 
 		local function addToQueue(loadFromRepo: string, part: Instance) -- i don't like repeating code .
 			local currentRepoScript = scriptRepository[loadFromRepo]
-			if currentRepoScript == nil then return end
+			if currentRepoScript == nil then return warn(`[{script.Name}]: script "{loadFromRepo}" doesn't exist in repository!!`) end
 			if not (typeof(currentRepoScript) == "table" and currentRepoScript.LoadOnStart) then
 				table.insert(modulesToRun, { instance = part, script = loadFromRepo })
 			end
@@ -72,13 +97,8 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 
 		local function applyPart(part: Instance)
 			if part:IsA("BasePart") then
-				if (Utility.checkConfig(part, "invisible") ~= nil) or (Utility.checkConfig(part, "Invisible") ~= nil) then
-					part.Transparency = 1
-				end
-
-				local setCollisionGroup = Utility.checkConfig(part, "SetCollisionGroup")
-				if typeof(setCollisionGroup) ~= "string" then setCollisionGroup = "ClientObjects" end
-				part.CollisionGroup = setCollisionGroup
+				if Utility.hasTag(part, "invisible") or Utility.hasTag(part, "Invisible") ~= nil then part.Transparency = 1 end
+				part.CollisionGroup = Utility.assureValueType(Utility.checkConfig(part, "SetCollisionGroup"), "ClientObjects")
 			end
 
 			local loadFromRepo: string? = part:GetAttribute("LoadFromRepository")
@@ -115,19 +135,13 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			if not repositoryScript then continue end -- shouldn't be possible
 
 			currentTrove:Add(task.spawn(function()
-				local scope: _T.Variables = {
-					trove = currentTrove,
-					communicators = communicators,
-					clientObjects = clientParts,
-					parent = scriptInfo.instance,
-					shared = sharedCache,
-					utility = Utility,
-				}
+				local newScope: _T.Variables = table.clone(scope)
+				newScope.parent = scriptInfo.instance
 
 				if typeof(repositoryScript) == "table" then
-					repositoryScript.new(scope)
+					repositoryScript.new(newScope)
 				elseif typeof(repositoryScript) == "function" then
-					repositoryScript(scope)
+					repositoryScript(newScope)
 				end
 			end))
 		end

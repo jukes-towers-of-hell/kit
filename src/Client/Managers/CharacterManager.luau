@@ -1,6 +1,8 @@
 --!strict
 -- CharacterManager by @synnwave
 
+-->insert-corescript-warning<--
+
 local players: Players = game:GetService("Players")
 local replicatedStorage: ReplicatedStorage = game:GetService("ReplicatedStorage")
 

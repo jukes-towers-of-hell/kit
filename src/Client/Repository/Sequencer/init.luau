@@ -7,7 +7,7 @@ local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 local runService: RunService = game:GetService("RunService")
 
 local Activators = require(script.Activators)
-type sequencerData = _T.sequencerData
+type sequencerData = Activators.sequencerData
 
 local STOPPED_COLOR = ColorSequence.new(Color3.fromRGB(255, 100, 100))
 local PAUSED_COLOR = ColorSequence.new(Color3.fromRGB(255, 255, 100))
@@ -101,6 +101,7 @@ return function(scope: _T.Variables)
 
 		local currentTrove = trove:Extend()
 		currentTrove:Add(function()
+			runID += 1
 			trove:Remove(currentTrove)
 			sequencerBase:PivotTo(startingPosition)
 			setColor(STOPPED_COLOR)
@@ -108,7 +109,7 @@ return function(scope: _T.Variables)
 		end)
 
 		local sequenceCount = #currentSequenceData
-		currentTrove:Connect(runService.Heartbeat, function(deltaTime: number)
+		currentTrove:Connect(runService.PostSimulation, function(deltaTime: number)
 			if savedRun ~= runID then return currentTrove:Clean() end
 			if isPaused then return setColor(PAUSED_COLOR) end
 			if deltaTime > LAG_THRESHOLD then return end

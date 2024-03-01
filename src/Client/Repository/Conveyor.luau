@@ -1,5 +1,7 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local runService: RunService = game:GetService("RunService")
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 

@@ -1,10 +1,21 @@
 --!strict
 
+-->insert-repository-warning<--
+
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
+export type sequencerActivator = (scope: _T.Variables, sequenceData: sequencerData) -> ()
+export type sequencerData = {
+	canAwait: boolean,
+	instance: PVInstance,
+	activators: { sequencerActivator }?,
+	hasPassed: boolean,
+	groupActivators: { { activators: { sequencerActivator }, data: sequencerData } }?,
+}
+
 export type activatorData = {
-	check: (scope: _T.Variables, sequenceData: _T.sequencerData) -> boolean,
-	activate: _T.sequencerActivator,
+	check: (scope: _T.Variables, sequenceData: sequencerData) -> boolean,
+	activate: sequencerActivator,
 	priority: number?,
 }
 
@@ -41,7 +52,7 @@ return function(scope: _T.Variables)
 		cacheReference.addActivator("SequenceGroups", require(activatorFunctions.SequenceGroups))
 
 		-- fetch activators function --
-		function cacheReference.fetchActivators(sequenceData: _T.sequencerData)
+		function cacheReference.fetchActivators(sequenceData: sequencerData)
 			-- sort out the activators --
 			local sortTable = {}
 			for _, activator in cacheReference.activators do
