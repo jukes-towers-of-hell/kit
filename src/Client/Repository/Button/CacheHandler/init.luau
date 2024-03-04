@@ -62,8 +62,7 @@ return function(scope: _T.Variables)
 		local isActivated = isPressed
 		if utility.hasTag(platform, "Invert") then isActivated = not isActivated end
 
-		local currentColor =
-			utility.roundColor(utility.assureValueType(utility.checkConfig(platform, "ColorOverride"), platform.Color))
+		local currentColor = utility.roundColor(utility.getConfig(platform, "ColorOverride", platform.Color))
 		if targetButton and currentColor ~= targetButton.Color then return end
 		platform:SetAttribute("Activated", isActivated)
 

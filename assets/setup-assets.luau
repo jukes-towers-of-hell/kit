@@ -23,7 +23,7 @@ return function(FILE_NAME: string, doNotRequest: string?)
 	do -- Replace asset strings
 		local ASSETS = require("published-assets")
 		local KIT_VERSION = require("kit-version")
-		local WARNING_MESSAGES = require("warning-messages")
+		local WARNING_MESSAGES: { [string]: string } = require("warning-messages")
 
 		local function getAssetFromDirectory(dir: string): string -- EXAMPLE: "textures/pushing_platform"
 			local currentDir = ASSETS.kit_assets
@@ -73,13 +73,12 @@ return function(FILE_NAME: string, doNotRequest: string?)
 		---------------------
 
 		-- insert warning messages --
-		local clientDirectory: Instance = game:GetService("StarterPlayer").StarterPlayerScripts.Client
-		clientDirectory:SetAttribute("KitVersion", KIT_VERSION.Kit)
-
 		for _, currentScript in game:GetDescendants() do
 			if not (currentScript:IsA("ModuleScript") or currentScript:IsA("BaseScript")) then continue end
+			if currentScript.Name == "ClientObjectManager" then currentScript:SetAttribute("KitVersion", KIT_VERSION.Kit) end
+
 			local finalSource = currentScript.Source
-			for warningKey: string, warningMessage: string in WARNING_MESSAGES do
+			for warningKey, warningMessage in WARNING_MESSAGES do
 				finalSource = finalSource:gsub(warningKey, warningMessage)
 			end
 

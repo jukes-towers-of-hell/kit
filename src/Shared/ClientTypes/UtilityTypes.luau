@@ -1,7 +1,4 @@
 --!strict
-
--->insert-corescript-warning<--
-
 export type Utility = {
 	-- Checks --
 	isBalloon: (parent: Instance) -> boolean,
@@ -21,6 +18,7 @@ export type Utility = {
 	getInstanceProperty: (instance: any, property: string) -> any,
 	setInstanceProperty: (instance: any, property: string, value: any) -> any,
 	assureValueType: <defaultType>(value: unknown, default: defaultType) -> defaultType,
+	getConfig: <defaultType>(instance: Instance, configName: string, default: defaultType) -> defaultType,
 
 	-- Unsorted --
 	applyPartOptimizations: (part: Instance?) -> (),

@@ -20,6 +20,8 @@ local function distanceBetween(pointA: CFrame, pointB: CFrame): number
 end
 
 return function(scope: _T.Variables)
+	scope:log("hello")
+
 	local sequencer, trove, shared, utility = scope.parent, scope.trove, scope.shared, scope.utility
 	if not (sequencer and sequencer:IsA("Model")) then return end
 	if utility.isBalloon(sequencer) or utility.isPushbox(sequencer) or utility.isTurret(sequencer) then return end
@@ -32,10 +34,10 @@ return function(scope: _T.Variables)
 	local fetchActivators = Activators(scope)
 
 	local startingPosition: CFrame = sequencerBase:GetPivot()
-	local loopAmount = utility.assureValueType(utility.checkConfig(configuration, "LoopAmount"), 0) + 1
-	local loopDelay = utility.assureValueType(utility.checkConfig(configuration, "LoopDelay"), 0)
-	local speed = -math.abs(utility.assureValueType(utility.checkConfig(configuration, "Speed"), 1))
-	local visualize = utility.assureValueType(utility.checkConfig(configuration, "Visualize"), false)
+	local loopAmount = utility.getConfig(configuration, "LoopAmount", 0) + 1
+	local loopDelay = utility.getConfig(configuration, "LoopDelay", 0)
+	local speed = -math.abs(utility.getConfig(configuration, "Speed", 1))
+	local visualize = utility.getConfig(configuration, "Visualize", false)
 	utility.applyPartOptimizations(sequencerBase)
 	sequencerBase.Transparency = 1
 
@@ -53,6 +55,7 @@ return function(scope: _T.Variables)
 		beam = script:FindFirstChildWhichIsA("Beam"):Clone()
 		beam.Attachment0 = attachment0
 		beam.Attachment1 = attachment1
+		beam.Width0, beam.Width1 = sequencerBase.Size.X, sequencerBase.Size.X
 		beam.Color = STOPPED_COLOR
 		beam.Parent = sequencerBase
 	end
@@ -134,7 +137,9 @@ return function(scope: _T.Variables)
 					if sequencePart.canAwait then isPaused = true end
 					for _, activator in sequencePart.activators do
 						local success, errorMessage: string? = pcall(activator, scope, sequencePart)
-						if (not success) and typeof(errorMessage) == "string" then warn(`sequencer error: {errorMessage}`) end
+						if (not success) and typeof(errorMessage) == "string" then
+							scope:log(`sequencer error: {errorMessage}`, true, "warn")
+						end
 					end
 					if sequencePart.canAwait then isPaused = false end
 				end

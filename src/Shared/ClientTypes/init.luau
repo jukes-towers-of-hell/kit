@@ -2,24 +2,19 @@
 
 -->insert-corescript-warning<--
 
-local players = game:GetService("Players")
-
-local UtilityTypes = require(script.UtilityTypes)
-local SignalTypes = require(script.SignalTypes) -- I don't know why but i can't do typeof on the Signal module 🥲
 local PlayerTypes = require(script.PlayerTypes)
+local PackageTypes = require(script.PackageTypes)
+local UtilityTypes = require(script.UtilityTypes)
 
 export type Character = PlayerTypes.Character
 export type Player = PlayerTypes.PlayerType
 
-local localPlayer: Player = players.LocalPlayer
-local Client = localPlayer.PlayerScripts.Client
+export type Trove = PackageTypes.Trove
+export type Utility = UtilityTypes.Utility & { tableUtil: PackageTypes.TableUtil }
 
-export type Trove = typeof(Client.Packages.Trove)
-export type Utility = UtilityTypes.Utility & { tableUtil: typeof(require(Client.Packages.TableUtil)) }
-
-export type Signal = SignalTypes.Signal
-export type RequestFunctions = SignalTypes.RequestFunctions
-export type requestFunction = SignalTypes.requestFunction
+export type Signal = PackageTypes.Signal
+export type RequestFunctions = PackageTypes.RequestFunctions
+export type requestFunction = PackageTypes.requestFunction
 
 export type Variables = {
 	trove: Trove,
@@ -33,6 +28,14 @@ export type Variables = {
 	utility: Utility,
 	repository: { [any]: any },
 	debug: boolean,
+	scriptPath: string?,
+	log: (
+		self: Variables,
+		str: string,
+		useTraceback: boolean?,
+		logType: ("success" | "error" | "warn" | "info" | true | false | number)?,
+		printType: ("print" | "warn" | "error" | number)?
+	) -> (),
 }
 
 export type LightingConfiguration = {
@@ -41,4 +44,4 @@ export type LightingConfiguration = {
 	TweenInfo: TweenInfo?,
 }
 
-return Client
+return nil

@@ -8,6 +8,9 @@
 -- getting instance properties (getInstanceProperty)
 -- setting instance properties (setInstanceProperty)
 
+local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
+local Utility: _T.Utility = require(script.Parent)
+
 local util = {}
 
 --[=[
@@ -34,6 +37,16 @@ end
 ]=]
 function util.assureValueType<defaultType>(value: unknown, default: defaultType): defaultType
 	return if typeof(default) == typeof(value) then value :: defaultType else default
+end
+
+--[=[
+@within utility
+@tag shorthand
+
+Shorthand for `utility.assureValueType(utility.checkConfig(instance, configName), default)`
+]=]
+function util.getConfig<defaultType>(instance: Instance, configName: string, default: defaultType)
+	return util.assureValueType(Utility.checkConfig(instance, configName), default)
 end
 
 return util
