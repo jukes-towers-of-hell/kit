@@ -59,7 +59,9 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
+      "$ignoreUnknownInstances": true,
       "EffectGUI": {
+        "$ignoreUnknownInstances": true,
         "$path": "src/EffectGUI.rbxm"
       }
     },

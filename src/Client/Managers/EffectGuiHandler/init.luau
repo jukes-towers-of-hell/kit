@@ -6,7 +6,10 @@ local players: Players = game:GetService("Players")
 local localPlayer = players.LocalPlayer :: Player
 local playerGui = localPlayer:WaitForChild("PlayerGui") :: PlayerGui
 
-local manager = { hasInitialized = false }
+local manager = {
+	hasInitialized = false,
+	KeyDisplayLimit = 5,
+}
 
 function manager:Init()
 	if manager.hasInitialized then return end
