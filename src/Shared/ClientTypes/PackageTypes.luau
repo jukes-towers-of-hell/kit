@@ -64,7 +64,7 @@ export type TableUtil = {
 	Truncate: <T>(tbl: { T }, len: number) -> { T },
 	Zip: (...{ [any]: any }) -> ((t: { any }, k: any) -> (any, any), { any }, any),
 	Lock: <T>(tbl: T) -> T,
-	IsEmpty: (tbl: { any }) -> boolean,
+	IsEmpty: (tbl: any) -> boolean,
 	EncodeJSON: (value: any) -> string,
 	DecodeJSON: (str: string) -> any,
 }

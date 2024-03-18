@@ -1,6 +1,7 @@
 # Project place file
 /kit.rbxlx
 /kit.rbxl
+**/kit-temp.rbxl
 
 # Roblox Studio lock files
 **/*.rbxlx.lock
@@ -17,3 +18,4 @@ wally.lock
 /.vscode
 .env
 .build
+.docs

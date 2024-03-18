@@ -20,7 +20,7 @@ function manager:Init()
 
 		-- Since this is the kit place, we need the folder to persist in the player's PlayerGui,
 		-- Roblox automatically removes any instance with ResetOnSpawn turned on.
-		-- Since this is a folder, we need to place it inside a GUI Instance. I'll be using a SurfaceGui to do this.
+		-- Since this is a folder, we need to place it inside a GUI Instance. I'll be using a SurfaceGui to do this
 		local dummyParent: SurfaceGui = Instance.new("SurfaceGui")
 		dummyParent.Enabled = false
 		dummyParent.ResetOnSpawn = false

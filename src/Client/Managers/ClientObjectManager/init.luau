@@ -106,7 +106,9 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 		local function applyPart(part: Instance)
 			if part:IsA("BasePart") then
 				if Utility.hasTag(part, "invisible") or Utility.hasTag(part, "Invisible") then part.Transparency = 1 end
-				part.CollisionGroup = Utility.getConfig(part, "SetCollisionGroup", "ClientObjects")
+
+				if part.CollisionGroup == "Default" then part.CollisionGroup = "ClientObjects" end
+				part.CollisionGroup = Utility.getConfig(part, "SetCollisionGroup", part.CollisionGroup)
 			end
 
 			local loadFromRepo: string? = part:GetAttribute("LoadFromRepository")

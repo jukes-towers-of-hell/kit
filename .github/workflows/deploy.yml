@@ -1,23 +1,23 @@
 name: Deploy
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-    build-and-deploy:
-      runs-on: windows-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: ok-nick/setup-aftman@v0.4.2
-          with:
-            token: ${{ secrets.GITHUB_TOKEN }}
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ok-nick/setup-aftman@v0.4.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Build project
-          run: lune run build.luau true
+      - name: Build project
+        run: lune run build.luau true
 
-        - name: Deploy project
-          env:
-            UID: 5628492917  # Universe ID
-            PID: 16315273730 # Place ID
-            API_KEY: ${{ secrets.OPENCLOUD }} 
-          run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f kit.rbxl
+      - name: Deploy project
+        env:
+          UID: 5628492917  # Universe ID
+          PID: 16315273730 # Place ID
+          API_KEY: ${{ secrets.OPENCLOUD }} 
+        run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f kit.rbxl

@@ -10,7 +10,13 @@ local localPlayer = players.LocalPlayer :: Player
 
 local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
 
-local manager = { hasInitialized = false }
+local manager = {
+	hasInitialized = false,
+	callbacks = {} :: { [BasePart]: { [string]: () -> () } },
+}
+
+local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
+local Utility: _T.Utility = require(script.Parent.UtilityManager)
 
 function manager:Init()
 	if manager.hasInitialized then return end
@@ -24,9 +30,13 @@ function manager:Init()
 		if not (torso and torso:IsA("BasePart")) then return end
 
 		for _, touchingPart: BasePart in workspace:GetPartsInPart(torso) do -- supports CCF parts!
-			if not touchingPart:FindFirstChild("CanFlip") then continue end
-			local offsetFromPart: CFrame = touchingPart.CFrame:ToObjectSpace(torso.CFrame)
+			if not (Utility.hasTag(touchingPart, "CanFlip") or Utility.getConfig(touchingPart, "SupportFlips", false)) then
+				continue
+			end
 
+			if not Utility.getConfig(touchingPart, "Activated", true) then return end
+
+			local offsetFromPart: CFrame = touchingPart.CFrame:ToObjectSpace(torso.CFrame)
 			local teleportPart: BasePart = touchingPart
 			local teleportToObject: Instance? = touchingPart:FindFirstChild("TeleToObject")
 			if
@@ -37,9 +47,19 @@ function manager:Init()
 				teleportPart = teleportToObject.Value
 			end
 
-			torso.CFrame = (teleportPart.CFrame * CFrame.Angles(0, math.pi, 0)) * offsetFromPart
+			if not Utility.hasTag(touchingPart, "DoNotFlipPlayer") then
+				torso.CFrame = (teleportPart.CFrame * CFrame.Angles(0, math.pi, 0)) * offsetFromPart
+			end
 
-			local sound: Sound = script.DoNotChange:Clone()
+			local callbacks = manager.callbacks[touchingPart]
+			if callbacks then
+				for _, callback in callbacks do
+					if typeof(callback) ~= "function" then continue end
+					task.spawn(callback)
+				end
+			end
+
+			local sound: Sound = (touchingPart:FindFirstChild("FlipSound") or script.DoNotChange):Clone()
 			sound.Parent = teleportPart
 			sound:Play()
 			debris:AddItem(sound, 0.8)

@@ -28,7 +28,7 @@ return function(scope: _T.Variables, deactivator: BasePart, deactivate: () -> ()
 
 			activate = function(_, sequenceData)
 				local deactivatorFunc = shared.buttonDeactivator_cache[sequenceData.instance]
-				if typeof(deactivatorFunc) == "function" then task.spawn(deactivatorFunc) end
+				if typeof(deactivatorFunc) == "function" then deactivatorFunc() end
 			end,
 		})
 	end))

@@ -20,8 +20,6 @@ local function distanceBetween(pointA: CFrame, pointB: CFrame): number
 end
 
 return function(scope: _T.Variables)
-	scope:log("hello")
-
 	local sequencer, trove, shared, utility = scope.parent, scope.trove, scope.shared, scope.utility
 	if not (sequencer and sequencer:IsA("Model")) then return end
 	if utility.isBalloon(sequencer) or utility.isPushbox(sequencer) or utility.isTurret(sequencer) then return end
@@ -32,6 +30,7 @@ return function(scope: _T.Variables)
 	if not ((sequencerBase and sequencerBase:IsA("BasePart")) and configuration and sequence) then return end
 
 	local fetchActivators = Activators(scope)
+	local cache = shared.sequencer_cache
 
 	local startingPosition: CFrame = sequencerBase:GetPivot()
 	local loopAmount = utility.getConfig(configuration, "LoopAmount", 0) + 1
@@ -75,7 +74,14 @@ return function(scope: _T.Variables)
 			canAwait = utility.hasTag(child, "AwaitSequence"),
 			instance = child,
 			hasPassed = false,
+			point = child:GetPivot(),
+			activatorData = {},
 		}
+
+		if child:IsA("Model") and not child.PrimaryPart then
+			-- sometimes models without a primary part have a weird pivot.. i need to use GetBoundingBox to go around this but i feel like it's a bit jank.... awesome!
+			currentData.point = (child:GetBoundingBox())
+		end
 
 		table.insert(sequenceData, currentData)
 	end
@@ -83,6 +89,7 @@ return function(scope: _T.Variables)
 	-- run sequence --
 	local runID = 0
 	local hasFetchedActivators = false
+	local sequenceFinished: BindableEvent = trove:Construct(Instance, "BindableEvent")
 	local function runSequence()
 		if not hasFetchedActivators then -- fetch activators when it's time to actually run the sequence (just to be safe), we'll only do this once tho
 			hasFetchedActivators = true
@@ -103,14 +110,6 @@ return function(scope: _T.Variables)
 		local currentSequenceData = utility.tableUtil.Copy(sequenceData, true)
 
 		local currentTrove = trove:Extend()
-		currentTrove:Add(function()
-			runID += 1
-			trove:Remove(currentTrove)
-			sequencerBase:PivotTo(startingPosition)
-			setColor(STOPPED_COLOR)
-			currentSequenceData = nil :: any
-		end)
-
 		local sequenceCount = #currentSequenceData
 		currentTrove:Connect(runService.PostSimulation, function(deltaTime: number)
 			if savedRun ~= runID then return currentTrove:Clean() end
@@ -130,15 +129,20 @@ return function(scope: _T.Variables)
 				end
 				if not sequencePart.activators then continue end
 
-				local distanceFromBase = distanceBetween(currentPosition, sequencePart.instance:GetPivot())
+				local distanceFromBase = distanceBetween(currentPosition, sequencePart.point)
 				if distanceFromBase >= 0 then
 					sequencePart.hasPassed = true
 					passed += 1
 					if sequencePart.canAwait then isPaused = true end
 					for _, activator in sequencePart.activators do
-						local success, errorMessage: string? = pcall(activator, scope, sequencePart)
-						if (not success) and typeof(errorMessage) == "string" then
-							scope:log(`sequencer error: {errorMessage}`, true, "warn")
+						local success, returned: string? = pcall(activator, scope, sequencePart)
+						if (not success) and typeof(returned) == "string" then
+							scope:log(`sequencer error: {returned}`, false, "error", "warn")
+						elseif success and returned == "STOP_CURRENT" then
+							break
+						elseif success and returned == "STOP_SEQUENCE" then
+							currentTrove:Clean()
+							return
 						end
 					end
 					if sequencePart.canAwait then isPaused = false end
@@ -148,18 +152,23 @@ return function(scope: _T.Variables)
 			if passed >= sequenceCount then currentTrove:Clean() end
 		end)
 
-		return runID
+		currentTrove:Add(function()
+			runID += 1
+			sequencerBase:PivotTo(startingPosition)
+			setColor(STOPPED_COLOR)
+			sequenceFinished:Fire()
+			currentSequenceData = nil :: any
+			trove:Remove(currentTrove)
+		end)
 	end
 
 	local debounce = false
-	local function sequenceWrapper()
+	local function sequenceWrapper(passedVariables: { [any]: any })
 		if debounce then return end
 		debounce = true
 		for _ = 1, loopAmount do
-			local currentRunID = runSequence()
-			repeat
-				task.wait()
-			until currentRunID ~= runID
+			runSequence()
+			sequenceFinished.Event:Wait()
 			if loopDelay > 0 then task.wait(loopDelay) end
 		end
 
@@ -167,7 +176,7 @@ return function(scope: _T.Variables)
 	end
 
 	-- add into cache to allow for sequencer activated sequencers --
-	shared.sequencer_cache.sequencers[sequencer] = sequenceWrapper
+	cache.sequencers[sequencer] = sequenceWrapper
 
 	-- check for toggle parts --
 	for _, part: Instance in sequencer:GetDescendants() do
@@ -175,12 +184,26 @@ return function(scope: _T.Variables)
 		if not part:IsA("BasePart") then continue end
 		if part.Name ~= "Toggle" then continue end
 
+		local currentVariables = {}
+		local variables: Instance? = part:FindFirstChild("Variables")
+		if variables then
+			currentVariables = variables:GetAttributes()
+			for _, value: Instance in variables:GetChildren() do
+				if not value:IsA("ValueBase") then continue end
+				currentVariables[value.Name] = (value :: any).Value
+			end
+		end
+
 		trove:Connect(part.Touched, function(toucher: BasePart)
 			if not utility.evaluateToucher(part, toucher, configuration) then return end
 			local buttonActivated: boolean = utility.checkConfig(part, "Activated")
 			if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
 
-			sequenceWrapper()
+			sequenceWrapper(currentVariables)
 		end)
+
+		if utility.getConfig(part, "SupportFlips", false) then -- flip activated sequencers
+			trove:Add(utility.onFlipped(part, function() sequenceWrapper(currentVariables) end))
+		end
 	end
 end

@@ -18,6 +18,7 @@ return function(scope: _T.Variables)
 
 	-- check if cache exists, if not then take care of the cache from now on --
 	if shared.button_cache == nil then handleCache(scope) end
+	local cache = shared.button_cache
 
 	-- initialize button --
 	local buttonPart: Instance? = button:FindFirstChild("ButtonPart")
@@ -28,7 +29,7 @@ return function(scope: _T.Variables)
 	local currentTrove = trove:Extend()
 	currentTrove:Add(function() trove:Remove(currentTrove) end)
 	currentTrove:AttachToInstance(button)
-	currentTrove:Add(function() shared.button_cache.Buttons[button] = nil end)
+	currentTrove:Add(function() cache.Buttons[button] = nil end)
 
 	local currentButton: Button = {
 		Button = buttonPart,
@@ -40,7 +41,7 @@ return function(scope: _T.Variables)
 	}
 
 	currentButton.Pressed.Parent = button
-	shared.button_cache.Buttons[button] = currentButton
+	cache.Buttons[button] = currentButton
 	local function updatePlatforms(pressed: boolean?)
 		communicators.event:Fire(
 			"update-button-platforms",
@@ -138,9 +139,10 @@ return function(scope: _T.Variables)
 			attachTimer(currentLabel)
 		end
 
-		local decimalPlaces: number = (
-			utility.checkConfig(timerTextLabel, "DecimalPlaces") or utility.checkConfig(configurations, "DecimalPlaces")
-		) or 0
+		local decimalPlaces: number = utility.assureValueType(
+			(utility.checkConfig(timerTextLabel, "DecimalPlaces") or utility.checkConfig(configurations, "DecimalPlaces")),
+			0
+		)
 
 		timerTrove:Add(function()
 			if currentButton.TotalPresses ~= savedTotalPresses then return end
@@ -160,16 +162,25 @@ return function(scope: _T.Variables)
 		end)
 	end)
 
-	currentTrove:Connect(buttonPart.Touched, function(toucher: BasePart)
+	if utility.isSequence(button) then return end -- ignore touched connections if the button is within a sequence
+	local function activateButton()
 		if debounce then return end
 		if currentButton.Pressed.Value then return end
-		if not utility.evaluateToucher(buttonPart, toucher, configurations) then return end
-
-		local buttonActivated: boolean = utility.checkConfig(buttonPart, "Activated")
-		if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
 
 		currentButton.Pressed.Value = true
 		debounce = true
 		task.delay(0.15, function() debounce = false end)
+	end
+
+	currentTrove:Connect(buttonPart.Touched, function(toucher: BasePart)
+		if not utility.evaluateToucher(buttonPart, toucher, configurations) then return end
+		local buttonActivated: boolean = utility.checkConfig(buttonPart, "Activated")
+		if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+
+		activateButton()
 	end)
+
+	if utility.getConfig(button, "SupportFlips", false) then -- if theres a SupportFlips value in the button ,,, the button will activate once Flipped
+		currentTrove:Add(utility.onFlipped(buttonPart, activateButton))
+	end
 end

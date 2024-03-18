@@ -10,16 +10,23 @@
 local util = {}
 
 --[=[
-@within utility
-@tag shorthand
+	@within utility
+	@tag shorthand
+
+	Rounds the components of a Color3 to prevent any potential floating point issues.
+	Mainly used by [Buttons](../docs/clientobjects/Buttons).
 ]=]
 function util.roundColor(color: Color3): Color3
 	return Color3.fromRGB(math.floor((color.R * 255) + 0.5), math.floor((color.G * 255) + 0.5), math.floor((color.B * 255) + 0.5))
 end
 
 --[=[
-@within utility
-@tag shorthand
+	@within utility
+	@tag shorthand
+	@param subtract number? -- default: 0.5
+
+	Subtracts the value of a Color3 by the given `subtract` number. 
+	Useful for text stroke colors.
 ]=]
 function util.subtractHSV(color: Color3, subtract: number?): Color3
 	local hue, saturation, value = color:ToHSV()

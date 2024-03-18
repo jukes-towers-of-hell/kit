@@ -1,0 +1,39 @@
+diff --git a/trove/init.lua b/trove/init.lua
+index 19578c9..0c7d8b5 100644
+--- a/trove/init.lua
++++ b/trove/init.lua
+@@ -162,6 +162,7 @@ end
+ 	```
+ ]=]
+ function Trove:Connect(signal, fn)
++	if signal == nil then return end
+ 	if self._cleaning then
+ 		error("Cannot call trove:Connect() while cleaning", 2)
+ 	end
+@@ -280,6 +281,7 @@ end
+ 	```
+ ]=]
+ function Trove:Add(object: any, cleanupMethod: string?): any
++	if object == nil then return end
+ 	if self._cleaning then
+ 		error("Cannot call trove:Add() while cleaning", 2)
+ 	end
+@@ -299,8 +301,9 @@ end
+ 	```
+ ]=]
+ function Trove:Remove(object: any): boolean
++	if object == nil then return false end
+ 	if self._cleaning then
+-		error("Cannot call trove:Remove() while cleaning", 2)
++		return false --error("Cannot call trove:Remove() while cleaning", 2)
+ 	end
+ 	return self:_findAndRemoveFromObjects(object, true)
+ end
+@@ -340,6 +343,7 @@ function Trove:_findAndRemoveFromObjects(object: any, cleanup: boolean): boolean
+ end
+ 
+ function Trove:_cleanupObject(object, cleanupMethod)
++	if object == nil then return end
+ 	if cleanupMethod == FN_MARKER then
+ 		object()
+ 	elseif cleanupMethod == THREAD_MARKER then

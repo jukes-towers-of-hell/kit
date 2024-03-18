@@ -18,6 +18,7 @@ function manager:Init()
 	local effectGui = playerGui:WaitForChild("EffectGUI") :: ScreenGui
 
 	-- handle new TimerList --
+	-- will handle sorting timers, and will remove timers if the parent doesn't exist
 	task.spawn(function()
 		local list = effectGui:FindFirstChild("TimerList") :: Frame
 		local gridBase = list:FindFirstChildWhichIsA("UIGridLayout") :: UIGridLayout

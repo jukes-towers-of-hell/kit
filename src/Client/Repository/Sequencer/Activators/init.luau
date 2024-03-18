@@ -10,7 +10,8 @@ export type sequencerData = {
 	instance: PVInstance,
 	activators: { sequencerActivator }?,
 	hasPassed: boolean,
-	groupActivators: { { activators: { sequencerActivator }, data: sequencerData } }?,
+	activatorData: { [any]: any },
+	point: CFrame,
 }
 
 export type activatorData = {
@@ -19,7 +20,6 @@ export type activatorData = {
 	priority: number?,
 }
 
-local activatorFunctions = script.ActivatorFunctions
 return function(scope: _T.Variables)
 	local shared, communicators = scope.shared, scope.communicators
 	if shared.sequencer_cache == nil then
@@ -47,9 +47,9 @@ return function(scope: _T.Variables)
 			cacheReference.activators[name] = data
 		end
 
-		cacheReference.addActivator("Killbricks", require(activatorFunctions.Killbricks))
-		cacheReference.addActivator("Sequencers", require(activatorFunctions.Sequencers))
-		cacheReference.addActivator("SequenceGroups", require(activatorFunctions.SequenceGroups))
+		cacheReference.addActivator("Killbricks", require(script.Killbricks))
+		cacheReference.addActivator("Sequencers", require(script.Sequencers))
+		cacheReference.addActivator("SequenceGroups", require(script.SequenceGroups))
 
 		-- fetch activators function --
 		function cacheReference.fetchActivators(sequenceData: sequencerData)

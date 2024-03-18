@@ -4,15 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build and deploy docs
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ok-nick/setup-aftman@v0.4.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
       - run: npm i -g moonwave@latest
+        
+      - name: Fetch Docs
+        run: lune run assets/make-docs.luau
+
       - name: Publish
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git

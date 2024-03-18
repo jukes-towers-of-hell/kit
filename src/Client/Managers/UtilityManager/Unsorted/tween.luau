@@ -5,8 +5,17 @@
 local tweenService: TweenService = game:GetService("TweenService")
 
 --[=[
-@within utility
-@param ... ...
+	@within utility
+	@param easingStyle Enum.EasingStyle? --[EasingStyle](https://create.roblox.com/docs/reference/engine/enums/EasingStyle)
+	@param easingDirection Enum.EasingDirection? --[EasingDirection](https://create.roblox.com/docs/reference/engine/enums/EasingDirection)
+	
+	Simple tween function that handles garbage collection properly.
+
+	```lua
+	scope.utility.tween(part, 0.5, {
+		Color = Color3.fromRGB(255, 0, 0)
+	})
+	```
 ]=]
 local function tween( -- long Function ...
 	instance: Instance,
@@ -14,7 +23,7 @@ local function tween( -- long Function ...
 	goal: { [string]: any },
 	easingStyle: Enum.EasingStyle?,
 	easingDirection: Enum.EasingDirection?,
-	...
+	...: any
 ): Tween
 	local tweenObject: Tween = tweenService:Create(
 		instance,

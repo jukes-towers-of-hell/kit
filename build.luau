@@ -34,6 +34,7 @@ write(color("blue"))
 linePrint("WALLY")
 write(color("reset"))
 spawn("wally", { "install" }, shellParams)
+spawn("wally-patch-package", {  }, shellParams)
 
 -- build rojo
 write(color("blue"))
