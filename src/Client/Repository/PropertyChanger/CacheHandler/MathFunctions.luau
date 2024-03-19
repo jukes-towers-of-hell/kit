@@ -1,4 +1,7 @@
+--!strict
 --selene: allow(unused_variable)
+
+-->insert-repository-warning<--
 
 return {
 	Add = function(a, b) return a + b end,

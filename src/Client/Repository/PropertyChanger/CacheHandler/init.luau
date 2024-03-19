@@ -99,37 +99,33 @@ handler.TWEENABLE_TYPES = { -- https://create.roblox.com/docs/reference/engine/c
 	"Vector3",
 }
 
-local mathFunctions = require(script.MathFunctions)
-
-local function getProperty(scope: _T.Variables, valueInstance: ObjectValue, currentValue: any)
-	if not valueInstance.Value then return currentValue end
-	local utility = scope.utility
-	local returnedProperty
-	local chosenValue = utility.checkConfig(valueInstance, "GetProperty")
-	local chosenAttribute = utility.checkConfig(valueInstance, "GetAttribute")
-	if typeof(chosenValue) == "string" then
-		returnedProperty = utility.getInstanceProperty(valueInstance.Value, chosenValue)
-	elseif typeof(chosenAttribute) == "string" then
-		returnedProperty = valueInstance.Value:GetAttribute(chosenAttribute)
-	end
-
-	if typeof(currentValue) == "string" then
-		returnedProperty = tostring(returnedProperty)
-	elseif typeof(currentValue) == "number" then
-		returnedProperty = tonumber(returnedProperty)
-	end
-
-	return returnedProperty
-end
+local COMPONENT_TYPES = require(script.ComponentTypes)
+local MATH_FUNCTIONS = require(script.MathFunctions)
 
 handler.TYPE_HANDLERS = {
 	function(scope: _T.Variables, currentValue: any, targetValue: any, propertyName: string, valueInstance: Instance?) -- Instance
 		if not (typeof(targetValue) == "Instance" and typeof(currentValue) ~= "Instance") then return targetValue end
+		local utility = scope.utility
 		if valueInstance and valueInstance:IsA("ObjectValue") and valueInstance.Value then -- choose property/attribute from instance
-			return getProperty(scope, valueInstance, currentValue)
+			local returnedProperty
+			local chosenValue = utility.checkConfig(valueInstance, "GetProperty")
+			local chosenAttribute = utility.checkConfig(valueInstance, "GetAttribute")
+			if typeof(chosenValue) == "string" then
+				returnedProperty = utility.getInstanceProperty(valueInstance.Value, chosenValue)
+			elseif typeof(chosenAttribute) == "string" then
+				returnedProperty = valueInstance.Value:GetAttribute(chosenAttribute)
+			end
+
+			if typeof(currentValue) == "string" then
+				returnedProperty = tostring(returnedProperty)
+			elseif typeof(currentValue) == "number" then
+				returnedProperty = tonumber(returnedProperty)
+			end
+
+			return returnedProperty
 		end
 
-		return scope.utility.getInstanceProperty(targetValue, propertyName)
+		return utility.getInstanceProperty(targetValue, propertyName)
 	end,
 
 	function(scope: _T.Variables, currentValue: any, targetValue: any, _: string, _: Instance?) -- EnumItem
@@ -185,7 +181,7 @@ handler.TYPE_HANDLERS = {
 
 		local utility = scope.utility
 		local modifiedNumber = targetValue
-		for tagName, func in mathFunctions do
+		for tagName, func in MATH_FUNCTIONS do
 			if utility.hasTag(valueInstance, tagName) then modifiedNumber = func(currentValue, targetValue) end
 		end
 
@@ -199,6 +195,9 @@ handler.TYPE_HANDLERS = {
 		if typeof(currentValue) == "CFrame" and typeof(targetValue) == "CFrame" then
 			local modifiedCFrame = targetValue
 			if utility.hasTag(valueInstance, "Multiply") then modifiedCFrame = currentValue * targetValue end
+			if utility.hasTag(valueInstance, "Inverse") then modifiedCFrame = currentValue:Inverse() end
+			if utility.hasTag(valueInstance, "ToWorldSpace") then modifiedCFrame = currentValue:ToWorldSpace(targetValue) end
+			if utility.hasTag(valueInstance, "ToObjectSpace") then modifiedCFrame = currentValue:ToObjectSpace(targetValue) end
 
 			return modifiedCFrame
 		end
@@ -218,21 +217,46 @@ handler.TYPE_HANDLERS = {
 		if not valueInstance then return targetValue end
 
 		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "Vector3" then
-			local modifiedCFrame = targetValue
-			if utility.hasTag(valueInstance, "Add") then modifiedCFrame = currentValue + targetValue end
-			if utility.hasTag(valueInstance, "Subtract") then modifiedCFrame = currentValue - targetValue end
-			if utility.hasTag(valueInstance, "Multiply") then modifiedCFrame = currentValue * targetValue end
-			if utility.hasTag(valueInstance, "Divide") then modifiedCFrame = currentValue / targetValue end
+			local modifiedVector = targetValue
+			if utility.hasTag(valueInstance, "Add") then modifiedVector = currentValue + targetValue end
+			if utility.hasTag(valueInstance, "Subtract") then modifiedVector = currentValue - targetValue end
+			if utility.hasTag(valueInstance, "Multiply") then modifiedVector = currentValue * targetValue end
+			if utility.hasTag(valueInstance, "Divide") then modifiedVector = currentValue / targetValue end
 
-			return modifiedCFrame
+			return modifiedVector
 		end
 
 		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "number" then
-			local modifiedCFrame = currentValue
-			if utility.hasTag(valueInstance, "Multiply") then modifiedCFrame = currentValue * targetValue end
-			if utility.hasTag(valueInstance, "Divide") then modifiedCFrame = currentValue / targetValue end
-			return modifiedCFrame
+			local modifiedVector = currentValue
+			if utility.hasTag(valueInstance, "Multiply") then modifiedVector = currentValue * targetValue end
+			if utility.hasTag(valueInstance, "Divide") then modifiedVector = currentValue / targetValue end
+			return modifiedVector
 		end
+
+		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "CFrame" then
+			local modifiedVector = currentValue
+			if utility.hasTag(valueInstance, "LookVector") then modifiedVector = targetValue.LookVector end
+			if utility.hasTag(valueInstance, "RightVector") then modifiedVector = targetValue.RightVector end
+			if utility.hasTag(valueInstance, "UpVector") then modifiedVector = targetValue.UpVector end
+			if utility.hasTag(valueInstance, "XVector") then modifiedVector = targetValue.XVector end
+			if utility.hasTag(valueInstance, "YVector") then modifiedVector = targetValue.YVector end
+			if utility.hasTag(valueInstance, "ZVector") then modifiedVector = targetValue.ZVector end
+
+			return modifiedVector
+		end
+
+		return targetValue
+	end,
+
+	function(scope: _T.Variables, currentValue: any, targetValue: any, _: string, valueInstance: Instance?) -- Create datatype from components
+		local utility = scope.utility
+		if not valueInstance then return targetValue end
+
+		local components: Instance? = valueInstance:FindFirstChild("Components")
+		if not components then return targetValue end
+
+		local currentDataType = COMPONENT_TYPES[typeof(currentValue)]
+		if not currentDataType then return targetValue end
 
 		return targetValue
 	end,
