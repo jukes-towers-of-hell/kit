@@ -249,16 +249,34 @@ handler.TYPE_HANDLERS = {
 	end,
 
 	function(scope: _T.Variables, currentValue: any, targetValue: any, _: string, valueInstance: Instance?) -- Create datatype from components
-		local utility = scope.utility
 		if not valueInstance then return targetValue end
 
 		local components: Instance? = valueInstance:FindFirstChild("Components")
 		if not components then return targetValue end
 
-		local currentDataType = COMPONENT_TYPES[typeof(currentValue)]
-		if not currentDataType then return targetValue end
+		local constructor = COMPONENT_TYPES[typeof(currentValue)]
+		if not constructor then return targetValue end
 
-		return targetValue
+		local componentValues = {}
+		for _, value in components:GetChildren() do
+			if not value:IsA("ValueBase") then continue end
+			local sort = (tonumber(value.Name) or tonumber(value.Name:split("|")[1])) or math.huge
+			local finalValue = (value :: any).Value
+			for _, valueHandler in handler.TYPE_HANDLERS do
+				finalValue = valueHandler(scope, 0, finalValue, "", value)
+			end
+
+			table.insert(componentValues, { sort = sort, value = finalValue })
+		end
+
+		table.sort(componentValues, function(a, b) return a.sort < b.sort end)
+
+		local finalComponentValues = {}
+		for sort: number, value in componentValues do
+			finalComponentValues[sort] = value.value
+		end
+
+		return constructor(table.unpack(finalComponentValues))
 	end,
 }
 

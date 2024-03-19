@@ -27,7 +27,7 @@ return {
 	floor = function(a, b) return math.floor(a) end,
 	fmod = function(a, b) return math.fmod(a, b) end,
 	ldexp = function(a, b) return math.ldexp(a, b) end,
-	log = function(a, b) return math.ceil(a) end,
+	log = function(a, b) return math.log(a) end,
 	log10 = function(a, b) return math.log10(a) end,
 	max = function(a, b) return math.max(a, b) end,
 	min = function(a, b) return math.min(a, b) end,
