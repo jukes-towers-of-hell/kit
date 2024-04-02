@@ -36,9 +36,9 @@ return function(scope: _T.Variables)
 	platform.Position = platform.Position - (platform.CFrame.UpVector * 2)
 	platform.Anchored = false
 
+	local oldForce: Vector3 = platformAlign.MaxAxesForce
+	local oldVelocity: number = platformAlign.MaxVelocity
 	local function reset(time: number)
-		local oldForce: Vector3 = platformAlign.MaxAxesForce
-		local oldVelocity: number = platformAlign.MaxVelocity
 		platformAlign.MaxAxesForce = RELEASE_FORCE
 		platformAlign.MaxVelocity = RELEASE_VELOCITY
 		task.wait(time)
@@ -50,6 +50,7 @@ return function(scope: _T.Variables)
 
 	-- set up end platform --
 	local releaseTransparency = utility.getConfig(fallingPlatform, "ReleaseTransparency", 0.8)
+	local oldTransparency = platform.Transparency
 
 	local currentTrove = trove:Extend()
 	currentTrove:Add(function() trove:Remove(currentTrove) end)
@@ -61,7 +62,6 @@ return function(scope: _T.Variables)
 		if debounce then return end
 		debounce = true
 
-		local oldTransparency = platform.Transparency
 		platform.CanCollide = false
 		platform.Transparency = releaseTransparency
 		reset(1.5)

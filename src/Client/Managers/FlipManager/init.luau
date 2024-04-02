@@ -9,6 +9,7 @@ local players: Players = game:GetService("Players")
 local localPlayer = players.LocalPlayer :: Player
 
 local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
+local DEFAULT_FLIP_SOUND = script:WaitForChild("DoNotChange")
 
 local manager = {
 	hasInitialized = false,
@@ -33,21 +34,14 @@ function manager:Init()
 			if not (Utility.hasTag(touchingPart, "CanFlip") or Utility.getConfig(touchingPart, "SupportFlips", false)) then
 				continue
 			end
+			if Utility.checkConfig(touchingPart, "Activated") == false then return end
 
-			if not Utility.getConfig(touchingPart, "Activated", true) then return end
-
-			local offsetFromPart: CFrame = touchingPart.CFrame:ToObjectSpace(torso.CFrame)
 			local teleportPart: BasePart = touchingPart
-			local teleportToObject: Instance? = touchingPart:FindFirstChild("TeleToObject")
-			if
-				teleportToObject
-				and teleportToObject:IsA("ObjectValue")
-				and (teleportToObject.Value and teleportToObject.Value:IsA("BasePart"))
-			then
-				teleportPart = teleportToObject.Value
-			end
+			local teleportToObject: Instance? = Utility.checkConfig(touchingPart, "TeleToObject")
+			if typeof(teleportToObject) == "Instance" and teleportToObject:IsA("BasePart") then teleportPart = teleportToObject end
 
 			if not Utility.hasTag(touchingPart, "DoNotFlipPlayer") then
+				local offsetFromPart: CFrame = touchingPart.CFrame:ToObjectSpace(torso.CFrame)
 				torso.CFrame = (teleportPart.CFrame * CFrame.Angles(0, math.pi, 0)) * offsetFromPart
 			end
 
@@ -59,7 +53,7 @@ function manager:Init()
 				end
 			end
 
-			local sound: Sound = (touchingPart:FindFirstChild("FlipSound") or script.DoNotChange):Clone()
+			local sound: Sound = (touchingPart:FindFirstChild("FlipSound") or DEFAULT_FLIP_SOUND):Clone()
 			sound.Parent = teleportPart
 			sound:Play()
 			debris:AddItem(sound, 0.8)

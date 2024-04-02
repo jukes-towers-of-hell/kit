@@ -174,8 +174,7 @@ return function(scope: _T.Variables)
 
 	currentTrove:Connect(buttonPart.Touched, function(toucher: BasePart)
 		if not utility.evaluateToucher(buttonPart, toucher, configurations) then return end
-		local buttonActivated: boolean = utility.checkConfig(buttonPart, "Activated")
-		if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+		if utility.checkConfig(buttonPart, "Activated") == false then return end
 
 		activateButton()
 	end)

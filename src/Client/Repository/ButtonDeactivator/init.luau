@@ -32,9 +32,7 @@ return function(scope: _T.Variables)
 		currentTrove:Connect(deactivator.Touched, function(toucher: BasePart)
 			if debounce then return end
 			if not utility.evaluateToucher(deactivator, toucher, deactivator) then return end
-
-			local buttonActivated: boolean = utility.checkConfig(deactivator, "Activated")
-			if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+			if utility.checkConfig(deactivator, "Activated") == false then return end
 
 			debounce = true
 			task.delay(0.25, function() debounce = false end)

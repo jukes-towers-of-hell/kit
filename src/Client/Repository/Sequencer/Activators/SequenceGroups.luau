@@ -10,9 +10,9 @@ local validModes = {
 }
 
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
-local function runSequence(scope: _T.Variables, sequence)
+local function runSequence(scope: _T.Variables, sequence, passedVariables)
 	for _, activator in sequence.activators do
-		local success, errorMessage: string? = pcall(activator, scope, sequence.data)
+		local success, errorMessage: string? = pcall(activator, scope, sequence.data, passedVariables)
 		if (not success) and typeof(errorMessage) == "string" then warn(`sequencer error: {errorMessage}`) end
 	end
 end
@@ -52,7 +52,7 @@ return {
 		return canContinue
 	end,
 
-	activate = function(scope: _T.Variables, sequenceData: any)
+	activate = function(scope: _T.Variables, sequenceData: any, passedVariables: { [any]: any })
 		local currentData = sequenceData.activatorData.sequenceGroups
 		if not currentData then return end
 
@@ -60,11 +60,11 @@ return {
 		local mode = currentData.mode
 		if mode == validModes[1] then -- random mode
 			local randomSequence = sequences[Random.new():NextInteger(1, #sequences)]
-			runSequence(scope, randomSequence)
+			runSequence(scope, randomSequence, passedVariables)
 		elseif (mode == validModes[2]) or (mode == validModes[3]) then -- and/or mode
 			local currentThreads = {}
 			for _, sequence in sequences do
-				table.insert(currentThreads, task.spawn(runSequence, scope, sequence))
+				table.insert(currentThreads, task.spawn(runSequence, scope, sequence, passedVariables))
 			end
 
 			local totalThreads = if mode == validModes[2] then #currentThreads else 1

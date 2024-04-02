@@ -16,6 +16,14 @@ export type Signal = PackageTypes.Signal
 export type RequestFunctions = PackageTypes.RequestFunctions
 export type requestFunction = PackageTypes.requestFunction
 
+export type log<T> = (
+	self: T,
+	str: string,
+	useTraceback: boolean?,
+	logType: ("success" | "error" | "warn" | "info" | true | false | number)?,
+	printType: ("print" | "warn" | "error" | number)?
+) -> ()
+
 export type Variables = {
 	trove: Trove,
 	parent: Instance?,
@@ -29,13 +37,7 @@ export type Variables = {
 	repository: { [any]: any },
 	debug: boolean,
 	scriptPath: string?,
-	log: (
-		self: Variables,
-		str: string,
-		useTraceback: boolean?,
-		logType: ("success" | "error" | "warn" | "info" | true | false | number)?,
-		printType: ("print" | "warn" | "error" | number)?
-	) -> (),
+	log: log<Variables>,
 }
 
 export type LightingConfiguration = {

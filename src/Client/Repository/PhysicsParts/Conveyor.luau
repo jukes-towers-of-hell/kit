@@ -21,7 +21,7 @@ return function(scope: _T.Variables)
 		-- this script looks bloated because of this loop :(
 		local cacheReference: { [any]: { conveyor: BasePart, beam: Beam?, speed: number? } } = {}
 		shared.conveyor_cache = cacheReference
-		trove:Connect(runService.Heartbeat, function()
+		trove:Connect(runService.PostSimulation, function()
 			debug.profilebegin("Set Unanchored Conveyor Velocities")
 			for id: any, data in cacheReference do
 				if (not data.conveyor:IsDescendantOf(workspace)) or data.conveyor.Anchored then

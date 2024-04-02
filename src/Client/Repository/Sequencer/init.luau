@@ -33,10 +33,11 @@ return function(scope: _T.Variables)
 	local cache = shared.sequencer_cache
 
 	local startingPosition: CFrame = sequencerBase:GetPivot()
-	local loopAmount = utility.getConfig(configuration, "LoopAmount", 0) + 1
-	local loopDelay = utility.getConfig(configuration, "LoopDelay", 0)
-	local speed = -math.abs(utility.getConfig(configuration, "Speed", 1))
-	local visualize = utility.getConfig(configuration, "Visualize", false)
+	local loopAmount: number = utility.getConfig(configuration, "LoopAmount", 0) + 1
+	local loopDelay: number = utility.getConfig(configuration, "LoopDelay", 0)
+	local speed: number = -math.abs(utility.getConfig(configuration, "Speed", 1))
+	local visualize: boolean = utility.getConfig(configuration, "Visualize", false)
+	local debounceTime: number = utility.getConfig(configuration, "Cooldown", 0.25)
 	utility.applyPartOptimizations(sequencerBase)
 	sequencerBase.Transparency = 1
 
@@ -90,7 +91,7 @@ return function(scope: _T.Variables)
 	local runID = 0
 	local hasFetchedActivators = false
 	local sequenceFinished: BindableEvent = trove:Construct(Instance, "BindableEvent")
-	local function runSequence()
+	local function runSequence(passedVariables)
 		if not hasFetchedActivators then -- fetch activators when it's time to actually run the sequence (just to be safe), we'll only do this once tho
 			hasFetchedActivators = true
 			for index, sequencePart in sequenceData do
@@ -135,7 +136,7 @@ return function(scope: _T.Variables)
 					passed += 1
 					if sequencePart.canAwait then isPaused = true end
 					for _, activator in sequencePart.activators do
-						local success, returned: string? = pcall(activator, scope, sequencePart)
+						local success, returned: string? = pcall(activator, scope, sequencePart, passedVariables)
 						if (not success) and typeof(returned) == "string" then
 							scope:log(`sequencer error: {returned}`, false, "error", "warn")
 						elseif success and returned == "STOP_CURRENT" then
@@ -166,12 +167,14 @@ return function(scope: _T.Variables)
 	local function sequenceWrapper(passedVariables: { [any]: any })
 		if debounce then return end
 		debounce = true
-		for _ = 1, loopAmount do
-			runSequence()
+		for loop = 1, loopAmount do
+			passedVariables.Current = loop
+			runSequence(passedVariables)
 			sequenceFinished.Event:Wait()
 			if loopDelay > 0 then task.wait(loopDelay) end
 		end
 
+		if debounceTime > 0 then task.wait(debounceTime) end
 		debounce = false
 	end
 
@@ -196,8 +199,7 @@ return function(scope: _T.Variables)
 
 		trove:Connect(part.Touched, function(toucher: BasePart)
 			if not utility.evaluateToucher(part, toucher, configuration) then return end
-			local buttonActivated: boolean = utility.checkConfig(part, "Activated")
-			if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+			if utility.checkConfig(part, "Activated") == false then return end
 
 			sequenceWrapper(currentVariables)
 		end)

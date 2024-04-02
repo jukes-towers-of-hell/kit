@@ -44,18 +44,21 @@ return function(scope: _T.Variables)
 	end
 
 	for _, value: Instance in properties:GetChildren() do
-		if not value:IsA("ValueBase") then continue end
+		if not (value:IsA("ValueBase") or value:IsA("Configuration")) then continue end
 		local sort = math.huge
 		local propertyName = value.Name
 		if propertyName:find("|") then -- sort properties , example: "1 | Size"
 			local split = propertyName:split("|")
-			sort = tonumber(split[1]) or sort
+			sort = tonumber(split[1]:match("%d+")) or sort
 			propertyName = (split[2]:gsub("%s", ""))
 		end
 
-		local currentValue = (value :: RealValueBase).Value
-		if value:IsA("ObjectValue") and value.Value == nil then -- automatically default blank objectvalues to the changer part
-			currentValue = changer
+		local currentValue
+		if value:IsA("ValueBase") then
+			currentValue = (value :: RealValueBase).Value
+			if value:IsA("ObjectValue") and value.Value == nil then -- automatically default blank objectvalues to the changer part
+				currentValue = changer
+			end
 		end
 
 		table.insert(targetProperties, { sort = sort, property = propertyName, value = currentValue, instance = value :: Instance })
@@ -71,7 +74,7 @@ return function(scope: _T.Variables)
 			local currentValue, propertyExists
 			if useAttributes then
 				currentValue = instance:GetAttribute(propertyName)
-				propertyExists = currentValue ~= nil
+				propertyExists = true
 			else
 				currentValue, propertyExists = utility.getInstanceProperty(instance, propertyName)
 			end
@@ -90,10 +93,11 @@ return function(scope: _T.Variables)
 				success, errorString = pcall(function()
 					local targetValue = propertyData.value
 					for _, valueHandler in cacheHandler.TYPE_HANDLERS do
-						targetValue = valueHandler(scope, currentValue, targetValue, propertyName, propertyData.instance)
+						targetValue =
+							valueHandler(scope, currentValue, targetValue, propertyName, propertyData.instance, nil, instance)
 					end
 
-					if targetValue ~= nil and (typeof(targetValue) ~= typeof(currentValue)) then
+					if (targetValue ~= nil and currentValue ~= nil) and (typeof(targetValue) ~= typeof(currentValue)) then
 						error(`property types don't match (got {typeof(targetValue)}, expected {typeof(currentValue)})`, 0)
 					end
 
@@ -119,16 +123,32 @@ return function(scope: _T.Variables)
 
 	local changeToucher: boolean = utility.getConfig(configuration, "ChangeToucher", false)
 	local debounce = false
-	local function activateChanger(toucher: BasePart?)
+	local uses: number = utility.getConfig(configuration, "Uses", math.huge)
+	local debounceTime: number = utility.getConfig(configuration, "Cooldown", 0.25)
+	local function activateChanger(toucher: BasePart?, sequencerVariables: { [any]: any }?)
+		if uses <= 0 then return end
 		if debounce then return end
-		debounce = true
-		task.delay(0.25, function() debounce = false end)
+		uses -= 1
+		if debounceTime > 0 then
+			debounce = true
+			task.delay(debounceTime, function() debounce = false end)
+		end
 
 		if (changeToucher and toucher) and (utility.isPushbox(toucher) or utility.isTurret(toucher) or utility.isBalloon(toucher)) then
 			changeProperties(toucher)
 		end
 
-		for _, taggedObject: Instance in taggedObjects do
+		local currentTaggedObjects = taggedObjects
+		if sequencerVariables then
+			for key, value in sequencerVariables do
+				if typeof(value) ~= "string" then continue end
+				if `$\{{key}}` ~= `$\{{currentTag}}` then continue end
+				currentTaggedObjects = tagHandler.getTagged(value)
+				break
+			end
+		end
+
+		for _, taggedObject: Instance in currentTaggedObjects do
 			changeProperties(taggedObject)
 		end
 	end
@@ -141,8 +161,7 @@ return function(scope: _T.Variables)
 	currentTrove:AttachToInstance(changer)
 	currentTrove:Connect(changer.Touched, function(toucher: BasePart)
 		if not utility.evaluateToucher(changer, toucher, configuration) then return end
-		local buttonActivated: boolean = utility.checkConfig(changer, "Activated")
-		if typeof(buttonActivated) == "boolean" and not buttonActivated then return end
+		if utility.checkConfig(changer, "Activated") == false then return end
 
 		activateChanger()
 	end)

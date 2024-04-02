@@ -4,7 +4,7 @@
 
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
-export type sequencerActivator = (scope: _T.Variables, sequenceData: sequencerData) -> ()
+export type sequencerActivator = (scope: _T.Variables, sequenceData: sequencerData, passedVariables: { [any]: any }) -> ()
 export type sequencerData = {
 	canAwait: boolean,
 	instance: PVInstance,

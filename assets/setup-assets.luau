@@ -64,6 +64,10 @@ return function(FILE_NAME: string, doNotRequest: string?)
 		local clientObjects = workspace.Kit.ClientSidedObjects
 		clientObjects:SetAttribute("KitVersion", KIT_VERSION.Kit)
 
+		local versionInstance: NumberValue = roblox.Instance.new("NumberValue")
+		versionInstance.Value = KIT_VERSION.Kit
+		versionInstance.Parent = clientObjects
+
 		for _, clientObject in clientObjects:GetChildren() do
 			local objectVersion = KIT_VERSION.ClientObjects[clientObject.Name]
 			if not objectVersion then continue end

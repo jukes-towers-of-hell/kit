@@ -18,9 +18,19 @@ local RequestFunctions = require(script.RequestFunctions)
 local Managers = root:FindFirstChild("Managers")
 local Utility: _T.Utility = require(Managers.UtilityManager)
 local lightingManager = require(Managers.LightingManager)
-local log = require(script.log)
+local log: _T.log<nil> = require(script.log)
 
 local DEBUG = true --workspace:GetAttribute("DEBUG_ENABLED")
+local REPOSITORY_ALIASES = {
+	"LoadFromRepository",
+	"RunRepoScript",
+	"RepositoryScript",
+}
+local SCRIPT_VERSION = script:GetAttribute("KitVersion")
+local SUPPORTED_VERSIONS = {
+	SCRIPT_VERSION,
+	6.0000,
+}
 
 local function getRepositoryScripts(scope: _T.Variables?, overrideRepository: Instance?)
 	local repository = {}
@@ -48,15 +58,19 @@ local function getRepositoryScripts(scope: _T.Variables?, overrideRepository: In
 	return repository
 end
 
-local clientParts: Instance = workspace:FindFirstChild("ClientParts") or Instance.new("Folder")
-if not clientParts:IsDescendantOf(workspace) then -- this is probably such a silly way of doing this
-	clientParts.Name = "ClientParts"
-	clientParts.Parent = workspace
-end
+local clientParts: Instance = workspace:FindFirstChild("ClientParts")
+	or (function() -- this is probably such a silly way of doing this
+		local newFolder = Instance.new("Folder")
+		newFolder.Name = "ClientParts"
+		newFolder.Parent = workspace
+		return newFolder
+	end)()
 
-function manager:LoadClientObjects(clientObjectFolder: Folder)
-	if clientObjectFolder:GetAttribute("KitVersion") ~= script:GetAttribute("KitVersion") then
-		log(nil, `kit versions don't match!!`, true, "warn")
+log(nil, `Script version: {SCRIPT_VERSION}`, false, "info")
+function manager:LoadClientObjects(clientObjectFolder: Folder, overrideRepository: Instance?)
+	local currentKitVersion = Utility.checkConfig(clientObjectFolder, "KitVersion")
+	if not table.find(SUPPORTED_VERSIONS, currentKitVersion) then
+		log(nil, `kit version isn't supported!! ({currentKitVersion})`, true, "warn")
 	end
 
 	local currentTrove: _T.Trove = Trove.new()
@@ -84,7 +98,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 		end,
 	}
 
-	scriptRepository = getRepositoryScripts(scope, workspace:FindFirstChild("RepositoryScripts", true))
+	scriptRepository = getRepositoryScripts(scope, overrideRepository)
 	local function scanParts(path: Instance, firstLoad: boolean, applySelf: boolean?)
 		local modulesToRun: { { instance: Instance?, script: string } } = {}
 		if firstLoad then
@@ -111,10 +125,12 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 				part.CollisionGroup = Utility.getConfig(part, "SetCollisionGroup", part.CollisionGroup)
 			end
 
-			local loadFromRepo: string? = part:GetAttribute("LoadFromRepository")
-			if typeof(loadFromRepo) == "string" then addToQueue(loadFromRepo, part) end -- load repository script from Attribute
-			if (part.Name == "LoadFromRepository" and part.Parent) and part:IsA("StringValue") then -- load repository script from String Value
-				addToQueue(part.Value, part.Parent)
+			for _, alias: string in REPOSITORY_ALIASES do
+				local loadFromRepo: string? = part:GetAttribute(alias)
+				if typeof(loadFromRepo) == "string" then addToQueue(loadFromRepo, part) end -- load repository script from Attribute
+				if (part.Name == alias and part.Parent) and part:IsA("StringValue") then -- load repository script from String Value
+					addToQueue(part.Value, part.Parent)
+				end
 			end
 		end
 
@@ -131,9 +147,7 @@ function manager:LoadClientObjects(clientObjectFolder: Folder)
 			applyPart(object)
 			for _, descendant: Instance in object:GetDescendants() do
 				if descendant:GetAttribute("DoNotApply") then continue end
-				if firstLoad then
-					if Utility.isPushbox(descendant) or Utility.isTurret(descendant) then continue end -- Pushboxes & Turrets will use the applyPart function later
-				end
+				if (Utility.isPushbox(descendant) or Utility.isTurret(descendant)) and not firstLoad then continue end -- Pushboxes & Turrets will use the applyPart function later
 
 				applyPart(descendant)
 			end

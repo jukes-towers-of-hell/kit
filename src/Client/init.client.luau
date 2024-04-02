@@ -14,6 +14,9 @@ require(managers.CharacterManager):Init()
 require(managers.FlipManager):Init()
 task.spawn(function() require(managers.EffectGuiHandler):Init() end)
 
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
+
 -- Handle client object loading with ClientObjectManager
+local repositoryOverride: Instance? = workspace:FindFirstChild("RepositoryScripts", true)
 local currentFolder: Folder = requestRemote:InvokeServer()
-clientObjectManager:LoadClientObjects(currentFolder)
+clientObjectManager:LoadClientObjects(currentFolder, repositoryOverride)
