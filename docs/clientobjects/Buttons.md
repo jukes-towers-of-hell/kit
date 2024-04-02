@@ -1,7 +1,0 @@
-# Buttons
-
-### Values
-
-### Tags
-
-
