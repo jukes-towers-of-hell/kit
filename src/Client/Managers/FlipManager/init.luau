@@ -11,6 +11,9 @@ local localPlayer = players.LocalPlayer :: Player
 local VALID_KEYCODES = { Enum.KeyCode.F, Enum.KeyCode.ButtonX }
 local DEFAULT_FLIP_SOUND = script:WaitForChild("DoNotChange")
 
+local PARAMS = OverlapParams.new()
+PARAMS.CollisionGroup = "" -- disable the collisiongroup check or else it won't work with collisiongroups other than Default
+
 local manager = {
 	hasInitialized = false,
 	callbacks = {} :: { [BasePart]: { [string]: () -> () } },
@@ -30,7 +33,7 @@ function manager:Init()
 		local torso: Instance? = character:FindFirstChild("Torso")
 		if not (torso and torso:IsA("BasePart")) then return end
 
-		for _, touchingPart: BasePart in workspace:GetPartsInPart(torso) do -- supports CCF parts!
+		for _, touchingPart: BasePart in workspace:GetPartsInPart(torso, PARAMS) do -- supports CCF parts!
 			if not (Utility.hasTag(touchingPart, "CanFlip") or Utility.getConfig(touchingPart, "SupportFlips", false)) then
 				continue
 			end

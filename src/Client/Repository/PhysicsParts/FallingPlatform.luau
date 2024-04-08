@@ -20,6 +20,12 @@ return function(scope: _T.Variables)
 	local platformAlign: AlignPosition? = platform:FindFirstChildWhichIsA("AlignPosition")
 	if not platformAlign then return end
 
+	for _, part: BasePart in platform:GetConnectedParts() do
+		if part == platform then continue end
+		if utility.hasTag(part, "Ignore") then continue end
+		part.Massless = true
+	end
+
 	local massValue = utility.getConfig(fallingPlatform, "CustomMass", GOLDEN_MASS)
 	local oldCustomPhysical = platform.CustomPhysicalProperties or platform.CurrentPhysicalProperties
 	platform.CustomPhysicalProperties = PhysicalProperties.new(
@@ -49,8 +55,17 @@ return function(scope: _T.Variables)
 	task.spawn(reset, 0.5)
 
 	-- set up end platform --
-	local releaseTransparency = utility.getConfig(fallingPlatform, "ReleaseTransparency", 0.8)
-	local oldTransparency = platform.Transparency
+	local platforms = {}
+	for _, part: Instance in utility.tableUtil.Extend(platform:GetDescendants(), { platform }) do
+		if not part:IsA("BasePart") then continue end
+		if utility.hasTag(part, "Ignore") then continue end
+		table.insert(platforms, {
+			platform = part,
+			transparency = part.Transparency,
+			releaseTransparency = utility.getConfig(fallingPlatform, "ReleaseTransparency", 0.8),
+			ignoreCanCollide = utility.hasTag(part, "IgnoreCanCollide"),
+		})
+	end
 
 	local currentTrove = trove:Extend()
 	currentTrove:Add(function() trove:Remove(currentTrove) end)
@@ -62,11 +77,19 @@ return function(scope: _T.Variables)
 		if debounce then return end
 		debounce = true
 
-		platform.CanCollide = false
-		platform.Transparency = releaseTransparency
+		for _, platformData in platforms do
+			platformData.platform.Transparency = platformData.releaseTransparency
+
+			if platformData.ignoreCanCollide then continue end
+			platformData.platform.CanCollide = false
+		end
 		reset(1.5)
-		platform.CanCollide = true
-		platform.Transparency = oldTransparency
+		for _, platformData in platforms do
+			platformData.platform.Transparency = platformData.transparency
+
+			if platformData.ignoreCanCollide then continue end
+			platformData.platform.CanCollide = true
+		end
 
 		debounce = false
 	end)

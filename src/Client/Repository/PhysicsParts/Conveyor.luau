@@ -37,7 +37,7 @@ return function(scope: _T.Variables)
 
 	local beam: Beam? = parent:FindFirstChildWhichIsA("Beam", true)
 	local conveyorId = utility.generateUID(false, true)
-	local function checkIfAnchored()
+	local function refresh()
 		local currentConfiguration =
 			{ conveyor = parent, beam = beam, speed = utility.getConfig(parent, "ConveyorSpeed", DEFAULT_SPEED) }
 
@@ -47,11 +47,11 @@ return function(scope: _T.Variables)
 	end
 
 	-- all of the connections below are for pushboxes & property changers support.
-	checkIfAnchored()
+	refresh()
 	local currentTrove = trove:Extend() -- create a sub-trove
 	currentTrove:AttachToInstance(parent) -- bind the part to the trove so when the part gets destroyed, connections will get destroyed along with it
-	currentTrove:Connect(utility.getConfigChangedSignal(parent, "ConveyorSpeed"), checkIfAnchored)
-	currentTrove:Connect(parent:GetPropertyChangedSignal("Anchored"), checkIfAnchored)
+	currentTrove:Connect(utility.getConfigChangedSignal(parent, "ConveyorSpeed"), refresh)
+	currentTrove:Connect(parent:GetPropertyChangedSignal("Anchored"), refresh)
 	currentTrove:Add(function() shared.conveyor_cache[conveyorId] = nil end) -- this code will run once the trove is cleaning up, removing itself from the cache
 	currentTrove:Add(function() trove:Remove(currentTrove) end)
 end

@@ -50,7 +50,7 @@ export type TableUtil = {
 	Filter: <T>(t: { T }, predicate: (T, any, { T }) -> boolean) -> { T },
 	Reduce: <T, R>(t: { T }, predicate: (R, T, any, { T }) -> R, init: R) -> R,
 	Assign: <T>(target: { T }, ...{ any }) -> { T } & { any },
-	Extend: <T, E>(target: { T }, extension: { E }) -> { E } & { T },
+	Extend: <T, E>(target: { T }, extension: { E }) -> { T | E },
 	Reverse: <T>(tbl: { T }) -> { T },
 	Shuffle: <T>(tbl: { T }, rngOverride: Random?) -> { T },
 	Sample: <T>(tbl: { T }, size: number, rngOverride: Random?) -> { T },
