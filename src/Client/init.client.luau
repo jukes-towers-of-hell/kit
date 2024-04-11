@@ -12,7 +12,7 @@ local clientObjectManager = require(managers.ClientObjectManager)
 require(managers.LightingManager):Init()
 require(managers.CharacterManager):Init()
 require(managers.FlipManager):Init()
-task.spawn(function() require(managers.EffectGuiHandler):Init() end)
+task.spawn(function() require(managers.EffectGuiManager):Init() end)
 
 game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
 
