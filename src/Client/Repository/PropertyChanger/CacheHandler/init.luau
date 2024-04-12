@@ -117,6 +117,9 @@ handler.TWEENABLE_TYPES = { -- https://create.roblox.com/docs/reference/engine/c
 	"Vector3",
 }
 
+-- Real sorry for what youre about to see.......
+-- (please if there's a better way to call datatype methods please let me know)
+
 local CONSTRUCTORS = require(script.Constructors)
 local MATH_FUNCTIONS = require(script.MathFunctions)
 
@@ -189,29 +192,26 @@ handler.TYPE_HANDLERS = {
 			(typeof(targetValue) == "number" or propertyName == "Component")
 			and (typeof(currentValue) == "Vector3" or typeof(currentValue) == "CFrame")
 		then
-			local modifiedVector = targetValue
-			if utility.hasTag(valueInstance, "X") then modifiedVector = currentValue.X end
-			if utility.hasTag(valueInstance, "Y") then modifiedVector = currentValue.Y end
-			if utility.hasTag(valueInstance, "Z") then modifiedVector = currentValue.Z end
-
-			return modifiedVector
+			return if utility.hasTag(valueInstance, "X")
+				then currentValue.X
+				elseif utility.hasTag(valueInstance, "Y") then currentValue.Y
+				elseif utility.hasTag(valueInstance, "Z") then currentValue.Z
+				else targetValue
 		end
 		if (propertyName == "Component") and (typeof(targetValue) == "Vector3" or typeof(targetValue) == "CFrame") then
-			local modifiedVector: any = targetValue
-			if utility.hasTag(valueInstance, "X") then modifiedVector = targetValue.X end
-			if utility.hasTag(valueInstance, "Y") then modifiedVector = targetValue.Y end
-			if utility.hasTag(valueInstance, "Z") then modifiedVector = targetValue.Z end
-
-			return modifiedVector
+			return if utility.hasTag(valueInstance, "X")
+				then targetValue.X
+				elseif utility.hasTag(valueInstance, "Y") then targetValue.Y
+				elseif utility.hasTag(valueInstance, "Z") then targetValue.Z
+				else targetValue
 		end
 
 		if (typeof(targetValue) == "number" or propertyName == "Component") and (typeof(currentValue) == "Color3") then
-			local finalValue = targetValue
-			if utility.hasTag(valueInstance, "R") then finalValue = math.floor((currentValue.R * 255) + 0.5) end
-			if utility.hasTag(valueInstance, "G") then finalValue = math.floor((currentValue.G * 255) + 0.5) end
-			if utility.hasTag(valueInstance, "B") then finalValue = math.floor((currentValue.B * 255) + 0.5) end
-
-			return finalValue
+			return if utility.hasTag(valueInstance, "R")
+				then math.floor((currentValue.R * 255) + 0.5)
+				elseif utility.hasTag(valueInstance, "G") then math.floor((currentValue.G * 255) + 0.5)
+				elseif utility.hasTag(valueInstance, "B") then math.floor((currentValue.B * 255) + 0.5)
+				else targetValue
 		end
 
 		return targetValue
@@ -223,6 +223,8 @@ handler.TYPE_HANDLERS = {
 		if targetValue == "{PI}" then targetValue = math.pi end
 		if typeof(targetValue) == "NumberRange" then
 			local type = if valueInstance then valueInstance:GetAttribute("NumberRangeType") else "Random"
+			type = type or "Random"
+
 			if type == "Random" then
 				targetValue = Random.new():NextInteger(targetValue.Min, targetValue.Max)
 			elseif type == "RandomNumber" then
@@ -254,32 +256,31 @@ handler.TYPE_HANDLERS = {
 		if not valueInstance then return targetValue end
 
 		if typeof(currentValue) == "CFrame" and typeof(targetValue) == "CFrame" then
-			local modifiedCFrame = targetValue
-			if utility.hasTag(valueInstance, "Rotation") then modifiedCFrame = currentValue.Rotation end
-			if utility.hasTag(valueInstance, "Multiply") then modifiedCFrame = currentValue * targetValue end
-			if utility.hasTag(valueInstance, "Inverse") then modifiedCFrame = currentValue:Inverse() end
-			if utility.hasTag(valueInstance, "ToWorldSpace") then modifiedCFrame = currentValue:ToWorldSpace(targetValue) end
-			if utility.hasTag(valueInstance, "ToObjectSpace") then modifiedCFrame = currentValue:ToObjectSpace(targetValue) end
-
-			return modifiedCFrame
+			return if utility.hasTag(valueInstance, "Rotation")
+				then currentValue.Rotation
+				elseif utility.hasTag(valueInstance, "Multiply") then currentValue * targetValue
+				elseif utility.hasTag(valueInstance, "Inverse") then currentValue:Inverse()
+				elseif utility.hasTag(valueInstance, "ToWorldSpace") then currentValue:ToWorldSpace(targetValue)
+				elseif utility.hasTag(valueInstance, "ToObjectSpace") then currentValue:ToObjectSpace(targetValue)
+				else targetValue
 		end
 
 		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "CFrame" then
-			local modifiedCFrame = targetValue
-			if utility.hasTag(valueInstance, "Add") then modifiedCFrame = targetValue + currentValue end
-			if utility.hasTag(valueInstance, "Subtract") then modifiedCFrame = targetValue - currentValue end
-			return modifiedCFrame
+			return if utility.hasTag(valueInstance, "Add")
+				then targetValue + currentValue
+				elseif utility.hasTag(valueInstance, "Subtract") then targetValue - currentValue
+				else targetValue
 		end
 
 		if typeof(currentValue) == "CFrame" and typeof(targetValue) == "Vector3" then
-			local modifiedCFrame = targetValue
-			if utility.hasTag(valueInstance, "LookVector") then modifiedCFrame = currentValue.LookVector end
-			if utility.hasTag(valueInstance, "RightVector") then modifiedCFrame = currentValue.RightVector end
-			if utility.hasTag(valueInstance, "UpVector") then modifiedCFrame = currentValue.UpVector end
-			if utility.hasTag(valueInstance, "XVector") then modifiedCFrame = currentValue.XVector end
-			if utility.hasTag(valueInstance, "YVector") then modifiedCFrame = currentValue.YVector end
-			if utility.hasTag(valueInstance, "ZVector") then modifiedCFrame = currentValue.ZVector end
-			return modifiedCFrame
+			return if utility.hasTag(valueInstance, "LookVector")
+				then currentValue.LookVector
+				elseif utility.hasTag(valueInstance, "RightVector") then currentValue.RightVector
+				elseif utility.hasTag(valueInstance, "UpVector") then currentValue.UpVector
+				elseif utility.hasTag(valueInstance, "XVector") then currentValue.XVector
+				elseif utility.hasTag(valueInstance, "YVector") then currentValue.LookVector
+				elseif utility.hasTag(valueInstance, "ZVector") then currentValue.ZVector
+				else targetValue
 		end
 
 		return targetValue
@@ -290,25 +291,27 @@ handler.TYPE_HANDLERS = {
 		if not valueInstance then return targetValue end
 
 		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "Vector3" then
-			local modifiedVector: any = targetValue
-			if utility.hasTag(valueInstance, "Add") then modifiedVector = currentValue + targetValue end
-			if utility.hasTag(valueInstance, "Subtract") then modifiedVector = currentValue - targetValue end
-			if utility.hasTag(valueInstance, "Multiply") then modifiedVector = currentValue * targetValue end
-			if utility.hasTag(valueInstance, "Divide") then modifiedVector = currentValue / targetValue end
-			if utility.hasTag(valueInstance, "Abs") then modifiedVector = modifiedVector:Abs() end
-			if utility.hasTag(valueInstance, "Ceil") then modifiedVector = modifiedVector:Ceil() end
-			if utility.hasTag(valueInstance, "Floor") then modifiedVector = modifiedVector:Floor() end
-			if utility.hasTag(valueInstance, "Sign") then modifiedVector = modifiedVector:Sign() end
-			if utility.hasTag(valueInstance, "Cross") then modifiedVector = currentValue:Cross(targetValue) end
-			if utility.hasTag(valueInstance, "Dot") then modifiedVector = currentValue:Dot(targetValue) end
-			return modifiedVector
+			return if utility.hasTag(valueInstance, "Add")
+				then currentValue + targetValue
+				elseif utility.hasTag(valueInstance, "Subtract") then currentValue - targetValue
+				elseif utility.hasTag(valueInstance, "Multiply") then currentValue * targetValue
+				elseif utility.hasTag(valueInstance, "Divide") then currentValue / targetValue
+				elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
+				elseif utility.hasTag(valueInstance, "Abs") then targetValue:Abs()
+				elseif utility.hasTag(valueInstance, "Ceil") then targetValue:Ceil()
+				elseif utility.hasTag(valueInstance, "Floor") then targetValue:Floor()
+				elseif utility.hasTag(valueInstance, "Sign") then targetValue:Sign()
+				elseif utility.hasTag(valueInstance, "Cross") then currentValue:Cross(targetValue)
+				elseif utility.hasTag(valueInstance, "Dot") then currentValue:Dot(targetValue)
+				else targetValue
 		end
 
 		if typeof(currentValue) == "Vector3" and typeof(targetValue) == "number" then
-			local modifiedVector = currentValue
-			if utility.hasTag(valueInstance, "Multiply") then modifiedVector = currentValue * targetValue end
-			if utility.hasTag(valueInstance, "Divide") then modifiedVector = currentValue / targetValue end
-			return modifiedVector
+			return if utility.hasTag(valueInstance, "Multiply")
+				then currentValue * targetValue
+				elseif utility.hasTag(valueInstance, "Divide") then currentValue / targetValue
+				elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
+				else currentValue
 		end
 
 		return targetValue

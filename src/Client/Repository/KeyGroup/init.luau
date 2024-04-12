@@ -79,6 +79,7 @@ return function(scope: _T.Variables)
 					instance = instance,
 					hitbox = hitbox,
 					doorParts = parts,
+					requiredKeys = utility.getConfig(instance, "RequiredKeys", 1),
 				}
 			end
 		end

@@ -16,6 +16,7 @@ export type KeyDoor = {
 	instance: Model,
 	hitbox: BasePart,
 	doorParts: { [BasePart]: string },
+	requiredKeys: number,
 }
 
 export type cached_Key = Key & {
@@ -30,9 +31,10 @@ export type cached_Key = Key & {
 	startTimer: number?,
 	collect: () -> (),
 	returnKey: () -> (),
+	use: (doorID: string) -> (),
 	viewport: typeof(script.KeyViewport),
 }
-export type cached_KeyDoor = KeyDoor & { ID: string, groupID: string }
+export type cached_KeyDoor = KeyDoor & { ID: string, groupID: string, usedKeys: { string } }
 
 export type KeyGroup = {
 	ID: string,
@@ -76,7 +78,7 @@ type EffectGuiManager = {
 
 local handler = {}
 function handler.handle(scope: _T.Variables): Cache
-	local shared, trove, utility = scope.shared, scope.trove, scope.utility
+	local shared, trove, utility, communicators = scope.shared, scope.trove, scope.utility, scope.communicators
 	if shared.key_system ~= nil then return shared.key_system end
 
 	local reference = {
@@ -125,6 +127,7 @@ function handler.handle(scope: _T.Variables): Cache
 				newKey.active = true
 				table.insert(reference.activeKeys, thisID)
 				if newKey.config.timer > 0 then newKey.startTimer = os.clock() end
+				communicators.event:Fire(thisID, "collected")
 				key.timerBillboard.Enabled = true
 
 				local hitboxClone = newKey.hitbox:Clone()
@@ -137,7 +140,7 @@ function handler.handle(scope: _T.Variables): Cache
 				local emitRate = utility.getConfig(particleEffect, "EmitRange", NumberRange.new(20, 50))
 				particleEffect.Parent = hitboxClone
 				particleEffect:Emit(Random.new():NextInteger(emitRate.Min, emitRate.Max))
-				playSoundFromHitbox(hitboxClone, script.PickupSound)
+				playSoundFromHitbox(newKey.hitbox, script.PickupSound)
 				Debris:AddItem(hitboxClone, particleEffect.Lifetime.Max)
 			end
 
@@ -150,9 +153,17 @@ function handler.handle(scope: _T.Variables): Cache
 				table.remove(reference.activeKeys, keyIndex)
 				newKey.startTimer = nil
 				newKey.active = false
-				newKey.timerBillboard.Enabled = false
 				newKey.cooldown = true
+				communicators.event:Fire(thisID, "returned")
 				task.delay(1, function() newKey.cooldown = false end)
+				newKey.timerBillboard.Enabled = false
+			end
+
+			function newKey.use(doorID: string)
+				if (not newKey.active) or newKey.used then return end
+
+				local door: cached_KeyDoor? = reference.doors[doorID]
+				if not door then return end
 			end
 
 			groupReference.keys[thisID] = newKey
@@ -166,6 +177,7 @@ function handler.handle(scope: _T.Variables): Cache
 			local newDoor = door :: cached_KeyDoor
 			newDoor.ID = thisID
 			newDoor.groupID = groupID
+			newDoor.usedKeys = {}
 
 			groupReference.doors[thisID] = newDoor
 			reference.doors[thisID] = newDoor
@@ -176,6 +188,7 @@ function handler.handle(scope: _T.Variables): Cache
 		reference.groups[groupID] = groupReference
 		return groupReference
 	end
+
 	shared.key_system = reference
 
 	-- Main function --

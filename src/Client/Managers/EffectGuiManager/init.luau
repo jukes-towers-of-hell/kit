@@ -76,6 +76,7 @@ function manager:Init()
 		RunService.Heartbeat:Connect(function()
 			for _, cache: any in manager.boundKeySystems do -- Sorry for the lack of type annoations here, im too lazy to add key types in this script...
 				for keyID: string, key in cache.keys do
+					if key.used then continue end
 					local viewport = key.viewport
 					if viewport.Parent ~= keyList then viewport.Parent = keyList end
 					if not viewport.CurrentCamera then viewport.CurrentCamera = keyCamera end
