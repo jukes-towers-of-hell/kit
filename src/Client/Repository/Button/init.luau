@@ -97,14 +97,23 @@ return function(scope: _T.Variables)
 		currentButton.TotalPresses += 1
 
 		local isPressed: boolean = currentButton.Pressed.Value
-		local pressedCFrame = originalCFrame * CFrame.new(0, -(utility.checkConfig(configurations, "ButtonPressOffset") or 0.75), 0)
+
+		local pressOffset = utility.checkConfig(configurations, "ButtonPressOffset")
+		local finalPressOffset = CFrame.new(Vector3.yAxis * -0.75)
+		if typeof(pressOffset) == "number" then
+			finalPressOffset = CFrame.new(Vector3.yAxis * -pressOffset)
+		elseif typeof(pressOffset) == "Vector3" then
+			finalPressOffset = CFrame.new(pressOffset)
+		elseif typeof(pressOffset) == "CFrame" then
+			finalPressOffset = pressOffset
+		end
 
 		buttonPart.Material = if isPressed
-			then utility.getEnumFromString(utility.checkConfig(configurations, "PressedMaterial"), Enum.Material.Neon)
-			else utility.getEnumFromString(utility.checkConfig(configurations, "UnpressedMaterial"), Enum.Material.Metal)
+			then utility.getConfig(configurations, "PressedMaterial", Enum.Material.Neon)
+			else utility.getConfig(configurations, "UnpressedMaterial", Enum.Material.Metal)
 
 		if buttonPart.Anchored and (not utility.isSequence(button)) then
-			utility.tween(buttonPart, 1, { CFrame = if isPressed then pressedCFrame else originalCFrame })
+			utility.tween(buttonPart, 1, { CFrame = if isPressed then (originalCFrame * finalPressOffset) else originalCFrame })
 		end
 		if isPressed and (buttonSound and buttonSound:IsA("Sound")) then buttonSound:Play() end
 		updatePlatforms()

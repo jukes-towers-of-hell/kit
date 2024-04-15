@@ -6,12 +6,13 @@ local runService: RunService = game:GetService("RunService")
 local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
 local DEFAULT_SPEED = 40
-local function setSpeed(conveyor: BasePart, beam: Beam?, speed: number)
-	--local speed = conveyor:GetAttribute("ConveyorSpeed")
-	local currentSpeed: number = if typeof(speed) == "number" then speed else DEFAULT_SPEED
+local function setSpeed(conveyor: BasePart, beam: Beam?, speed: number?)
+	local currentSpeed: number = speed or DEFAULT_SPEED
 	conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * currentSpeed
 	if beam then beam.TextureSpeed = currentSpeed / beam.TextureLength end
 end
+
+type Conveyor = { conveyor: BasePart, beam: Beam?, speed: number? }
 
 return function(scope: _T.Variables)
 	local parent, trove, shared, utility = scope.parent, scope.trove, scope.shared, scope.utility
@@ -19,11 +20,12 @@ return function(scope: _T.Variables)
 
 	if shared.conveyor_cache == nil then -- cache doesn't exist, this script will handle all unanchored parts from now on to keep things optimized!
 		-- this script looks bloated because of this loop :(
-		local cacheReference: { [any]: { conveyor: BasePart, beam: Beam?, speed: number? } } = {}
+		local cacheReference: { [any]: Conveyor } = {}
 		shared.conveyor_cache = cacheReference
 		trove:Connect(runService.PostSimulation, function()
 			debug.profilebegin("Set Unanchored Conveyor Velocities")
-			for id: any, data in cacheReference do
+
+			for id, data in cacheReference do
 				if (not data.conveyor:IsDescendantOf(workspace)) or data.conveyor.Anchored then
 					cacheReference[id] = nil
 					continue
@@ -31,6 +33,7 @@ return function(scope: _T.Variables)
 
 				setSpeed(data.conveyor, data.beam, data.speed or DEFAULT_SPEED)
 			end
+
 			debug.profileend()
 		end)
 	end
@@ -38,7 +41,7 @@ return function(scope: _T.Variables)
 	local beam: Beam? = parent:FindFirstChildWhichIsA("Beam", true)
 	local conveyorId = utility.generateUID(false, true)
 	local function refresh()
-		local currentConfiguration =
+		local currentConfiguration: Conveyor =
 			{ conveyor = parent, beam = beam, speed = utility.getConfig(parent, "ConveyorSpeed", DEFAULT_SPEED) }
 
 		shared.conveyor_cache[conveyorId] = if parent.Anchored then nil else currentConfiguration

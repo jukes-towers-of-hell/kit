@@ -56,7 +56,9 @@ end
 	Shorthand for `utility.assureValueType(utility.checkConfig(instance, configName), default)`
 ]=]
 function util.getConfig<defaultType>(instance: Instance, configName: string, default: defaultType): defaultType
-	return util.assureValueType(Utility.checkConfig(instance, configName), default)
+	local returnedConfig = Utility.checkConfig(instance, configName)
+	if typeof(default) == "EnumItem" then return Utility.getEnumFromString(returnedConfig, default) end
+	return util.assureValueType(returnedConfig, default)
 end
 
 return util

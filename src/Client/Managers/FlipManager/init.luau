@@ -1,5 +1,5 @@
 --!strict
--- FlipManager by Jukereise & @synnwave
+-- FlipManager by Jukecallaa & @synnwave
 
 -->insert-corescript-warning<--
 

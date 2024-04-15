@@ -66,6 +66,7 @@ return function(FILE_NAME: string, doNotRequest: string?)
 
 		local versionInstance: NumberValue = roblox.Instance.new("NumberValue")
 		versionInstance.Value = KIT_VERSION.Kit
+		versionInstance.Name = "KitVersion"
 		versionInstance.Parent = clientObjects
 
 		for _, clientObject in clientObjects:GetChildren() do

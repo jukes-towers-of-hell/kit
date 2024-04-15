@@ -22,6 +22,7 @@ export type Utility = {
 	getConfig: <defaultType>(instance: Instance, configName: string, default: defaultType) -> defaultType,
 
 	-- Unsorted --
+	WaitForDescendant: (instance: Instance, descendantName: string, timeout: number?) -> Instance?,
 	applyPartOptimizations: (part: Instance?) -> (),
 	getEnumFromString: (str: string | EnumItem, default: EnumItem) -> any,
 	generateUID: (curlyBraces: boolean?, removeSplit: boolean?) -> string,

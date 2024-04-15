@@ -32,10 +32,8 @@ return function(scope: _T.Variables)
 	-- tween configurations --
 	local canTween: boolean = utility.getConfig(configuration, "CanTween", false)
 	local tweenTime: number = utility.getConfig(configuration, "TweenTime", 0.5)
-	local easingStyle: Enum.EasingStyle =
-		utility.getEnumFromString(utility.checkConfig(configuration, "EasingStyle"), Enum.EasingStyle.Linear)
-	local easingDirection: Enum.EasingDirection =
-		utility.getEnumFromString(utility.checkConfig(configuration, "EasingDirection"), Enum.EasingDirection.Out)
+	local easingStyle: Enum.EasingStyle = utility.getConfig(configuration, "EasingStyle", Enum.EasingStyle.Linear)
+	local easingDirection: Enum.EasingDirection = utility.getConfig(configuration, "EasingDirection", Enum.EasingDirection.Out)
 
 	-- properties --
 	local targetProperties: { { sort: number, property: string, value: any, instance: Instance? } } = {}

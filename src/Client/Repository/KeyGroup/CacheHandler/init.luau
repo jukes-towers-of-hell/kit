@@ -3,7 +3,7 @@
 -->insert-repository-warning<--
 
 export type Key = {
-	instance: Model,
+	instance: Model?,
 	originalCFrame: CFrame,
 	hitbox: BasePart,
 	timerBillboard: typeof(script.Parent.KeyTimer),
@@ -31,17 +31,23 @@ export type cached_Key = Key & {
 	startTimer: number?,
 	collect: () -> (),
 	returnKey: () -> (),
-	use: (doorID: string) -> (),
 	viewport: typeof(script.KeyViewport),
 }
-export type cached_KeyDoor = KeyDoor & { ID: string, groupID: string, usedKeys: { string } }
+export type cached_KeyDoor = KeyDoor & {
+	ID: string,
+	groupID: string,
+	unlocked: boolean,
+	usedKeys: { string },
+	unlock: () -> (),
+	useKey: (keyID: string) -> (),
+}
 
 export type KeyGroup = {
 	ID: string,
 	keys: { [string]: cached_Key },
 	doors: { [string]: cached_KeyDoor },
 
-	addKey: (Key) -> cached_Key,
+	addKey: (Key) -> cached_Key?,
 	addDoor: (KeyDoor) -> cached_KeyDoor,
 }
 
@@ -65,21 +71,41 @@ local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 local Debris = game:GetService("Debris")
 local RunService = game:GetService("RunService")
 local players: Players = game:GetService("Players")
+
 local localPlayer = players.LocalPlayer :: _T.Player
-local Managers = localPlayer.PlayerScripts.Client.Managers
-local EffectGuiManager = require(Managers:FindFirstChild("EffectGuiManager")) :: EffectGuiManager
-type EffectGuiManager = {
-	KeyDisplayLimit: number,
-	Init: (self: EffectGuiManager) -> (),
-	BindKeySystem: (Cache) -> (),
-	UnbindKeySystem: (string) -> (),
-	boundKeys: { [string]: any },
-}
 
 local handler = {}
+handler.DOOR_DESTROY_METHODS = {
+	Vanish = function(part: BasePart, scope: _T.Variables)
+		part.CanCollide = false
+		part.CanTouch = false
+		--this looks kinda silly but its better than using wait
+		scope.utility.tween(part, 0.5, { Transparency = 1 }).Completed:Once(function() part:Destroy() end)
+	end,
+
+	Fall = function(part: BasePart, scope: _T.Variables)
+		local random = Random.new()
+		local powerRange = scope.utility.getConfig(part, "FallPower", NumberRange.new(-10, 10))
+		local function rng(multiplier: number) return random:NextInteger(powerRange.Min * multiplier, powerRange.Max * multiplier) end
+
+		part.Anchored = false
+		part.CanCollide = false
+		part.AssemblyAngularVelocity = Vector3.new(rng(1), rng(1), rng(1))
+		part.AssemblyLinearVelocity = Vector3.new(rng(3), rng(3), rng(3));
+		(part :: any):BreakJoints()
+	end,
+
+	Destroy = function(part: BasePart) part:Destroy() end,
+}
+
 function handler.handle(scope: _T.Variables): Cache
 	local shared, trove, utility, communicators = scope.shared, scope.trove, scope.utility, scope.communicators
 	if shared.key_system ~= nil then return shared.key_system end
+
+	local EffectGuiManager = require(utility.WaitForDescendant(localPlayer:WaitForChild("PlayerScripts"), "EffectGuiManager")) :: {
+		BindKeySystem: (Cache) -> (),
+		UnbindKeySystem: (string) -> (),
+	}
 
 	local reference = {
 		groups = {},
@@ -90,11 +116,8 @@ function handler.handle(scope: _T.Variables): Cache
 	}
 
 	local function playSoundFromHitbox(hitbox: Instance, sound: Sound)
-		if hitbox:FindFirstChild("ReplaceSound") then
-			utility.playSoundFromPart("ReplaceSound", hitbox, hitbox)
-			return
-		end
-
+		local replaceSound: Instance? = hitbox:FindFirstChild("ReplaceSound")
+		if replaceSound and replaceSound:IsA("Sound") then return utility.playSoundFromPart(replaceSound, hitbox) end
 		utility.playSoundFromPart(sound, hitbox)
 	end
 
@@ -105,6 +128,8 @@ function handler.handle(scope: _T.Variables): Cache
 		function groupReference.addKey(key: Key)
 			local thisID = utility.generateUID(false, true)
 			local newKey = key :: cached_Key
+			if not newKey.instance then return end
+
 			newKey.ID = thisID
 			newKey.groupID = groupID
 			newKey.active = false
@@ -123,7 +148,9 @@ function handler.handle(scope: _T.Variables): Cache
 			end
 
 			function newKey.collect()
-				if newKey.active or newKey.cooldown then return end
+				if newKey.active or newKey.cooldown or newKey.used then return end
+				if not newKey.instance then return end
+
 				newKey.active = true
 				table.insert(reference.activeKeys, thisID)
 				if newKey.config.timer > 0 then newKey.startTimer = os.clock() end
@@ -145,7 +172,8 @@ function handler.handle(scope: _T.Variables): Cache
 			end
 
 			function newKey.returnKey()
-				if (not newKey.active) or newKey.cooldown or newKey.used then return end
+				if (not newKey.active) or newKey.cooldown then return end
+				if not newKey.instance then return end
 
 				local keyIndex = table.find(reference.activeKeys, thisID)
 				if not keyIndex then return end
@@ -154,16 +182,9 @@ function handler.handle(scope: _T.Variables): Cache
 				newKey.startTimer = nil
 				newKey.active = false
 				newKey.cooldown = true
-				communicators.event:Fire(thisID, "returned")
+				if not newKey.used then communicators.event:Fire(thisID, "returned") end
 				task.delay(1, function() newKey.cooldown = false end)
 				newKey.timerBillboard.Enabled = false
-			end
-
-			function newKey.use(doorID: string)
-				if (not newKey.active) or newKey.used then return end
-
-				local door: cached_KeyDoor? = reference.doors[doorID]
-				if not door then return end
 			end
 
 			groupReference.keys[thisID] = newKey
@@ -178,6 +199,47 @@ function handler.handle(scope: _T.Variables): Cache
 			newDoor.ID = thisID
 			newDoor.groupID = groupID
 			newDoor.usedKeys = {}
+			newDoor.unlocked = false
+
+			function newDoor.unlock()
+				if newDoor.unlocked then return end
+				if #newDoor.usedKeys < newDoor.requiredKeys then return end
+				newDoor.unlocked = true
+				newDoor.hitbox.CanTouch = false
+
+				communicators.event:Fire(thisID, "unlocked")
+				playSoundFromHitbox(door.hitbox, script.UnlockSound)
+
+				for part, destroyType in newDoor.doorParts do
+					local destroyFunction = handler.DOOR_DESTROY_METHODS[destroyType]
+					if not destroyFunction then continue end
+					task.spawn(destroyFunction, part, scope)
+				end
+			end
+
+			function newDoor.useKey(keyID: string)
+				if newDoor.unlocked then return end
+				local key: cached_Key? = groupReference.keys[keyID]
+				if not key then return end
+				if (not key.active) or key.used then return end
+
+				key.hitbox.CanTouch = false
+				key.used = true
+				key.returnKey()
+				key.config.spinSpeed = 0
+				key.targetCFrame = door.hitbox:GetPivot()
+				table.insert(newDoor.usedKeys, keyID)
+
+				task.delay(0.4, function()
+					if not key.instance then return end
+					key.instance:Destroy()
+					key.instance = nil
+				end)
+
+				communicators.event:Fire(keyID, "used")
+				communicators.event:Fire(thisID, "key-used", keyID)
+				if #newDoor.usedKeys >= newDoor.requiredKeys then newDoor.unlock() end
+			end
 
 			groupReference.doors[thisID] = newDoor
 			reference.doors[thisID] = newDoor
@@ -195,7 +257,7 @@ function handler.handle(scope: _T.Variables): Cache
 	local trailList: { Vector3 } = {}
 	local lastTrailUpdatePosition: Vector3 = nil
 	local lastTrailUpdateTime = 0
-	trove:Connect(RunService.RenderStepped, function(deltaTime: number)
+	trove:Connect(RunService.Heartbeat, function(deltaTime: number)
 		local character: Model? = localPlayer.Character
 		if not character then return end
 		local humanoid: Humanoid? = character:FindFirstChildWhichIsA("Humanoid")
@@ -226,6 +288,8 @@ function handler.handle(scope: _T.Variables): Cache
 		local cameraPosition = workspace.CurrentCamera.CFrame.Position
 		local speedDelta = (deltaTime * LERP_SPEED)
 		for keyID, key in reference.keys do
+			if not key.instance then continue end
+
 			local keyIndex = table.find(reference.activeKeys, keyID)
 			if (keyIndex ~= nil and key.active) and typeof(key.startTimer) == "number" then
 				debug.profilebegin("Handle Key Timer")
@@ -242,27 +306,35 @@ function handler.handle(scope: _T.Variables): Cache
 
 			debug.profilebegin("Position Key")
 			local rotation = math.rad((currentClock * (60 * key.config.spinSpeed)) % 360)
-			local finalPosition: Vector3 = key.originalCFrame.Position
+			local targetPosition: Vector3 | CFrame = key.originalCFrame.Position
 			if key.overrideCFrame then
-				key.instance:PivotTo(key.overrideCFrame)
 				debug.profileend()
 				continue
 			elseif key.targetCFrame then
-				finalPosition = key.targetCFrame.Position
+				targetPosition = key.targetCFrame
 			elseif keyIndex ~= nil then
-				finalPosition = trailList[math.floor(TRAIL_DISTANCE * keyIndex)]
+				targetPosition = trailList[math.floor(TRAIL_DISTANCE * keyIndex)]
 					or trailList[#trailList]
 					or currentPosition
 					or Vector3.zero
 			end
 
-			if ((not key.active) and not key.cooldown) and (finalPosition - cameraPosition).Magnitude > MAX_PIVOT_DISTANCE then
+			if
+				((not key.active) and not key.cooldown and not key.used)
+				and (targetPosition - cameraPosition).Magnitude > MAX_PIVOT_DISTANCE
+			then
 				debug.profileend()
 				continue
 			end
 
-			finalPosition = key.instance:GetPivot().Position:Lerp(finalPosition, speedDelta)
-			key.instance:PivotTo(CFrame.new(finalPosition) * CFrame.Angles(0, rotation, 0))
+			local finalPosition: CFrame
+			if typeof(targetPosition) == "Vector3" then
+				finalPosition = CFrame.new(key.instance:GetPivot().Position:Lerp(targetPosition, speedDelta))
+			elseif typeof(targetPosition) == "CFrame" then
+				finalPosition = key.instance:GetPivot():Lerp(targetPosition, speedDelta)
+			end
+
+			key.instance:PivotTo(finalPosition * CFrame.Angles(0, rotation, 0))
 			debug.profileend()
 		end
 

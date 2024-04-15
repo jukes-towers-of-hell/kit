@@ -74,9 +74,14 @@ function manager:Init()
 
 		-- Key Loop
 		RunService.Heartbeat:Connect(function()
+			debug.profilebegin("Key GUI Loop")
+
 			for _, cache: any in manager.boundKeySystems do -- Sorry for the lack of type annoations here, im too lazy to add key types in this script...
 				for keyID: string, key in cache.keys do
+					if not key.instance then continue end
+					if not key.viewport then continue end
 					if key.used then continue end
+
 					local viewport = key.viewport
 					if viewport.Parent ~= keyList then viewport.Parent = keyList end
 					if not viewport.CurrentCamera then viewport.CurrentCamera = keyCamera end
@@ -84,8 +89,12 @@ function manager:Init()
 					local keyIndex = table.find(cache.activeKeys, keyID)
 					if keyIndex ~= nil and keyIndex >= manager.KeyDisplayLimit then
 						viewport.LayoutOrder = keyIndex
-						if key.instance.Parent ~= viewport then key.instance.Parent = viewport end
 						key.overrideCFrame = CFrame.identity
+						if key.instance.Parent ~= viewport then
+							key.instance.Parent = viewport
+							key.instance:PivotTo(key.overrideCFrame)
+						end
+
 						if key.startTimer then
 							local elapsedTime = (os.clock() - key.startTimer)
 							viewport.Time.Text = math.abs(math.ceil(key.config.timer - elapsedTime))
@@ -99,6 +108,8 @@ function manager:Init()
 					end
 				end
 			end
+
+			debug.profileend()
 		end)
 	end)
 end

@@ -62,9 +62,24 @@ return function(scope: _T.Variables)
 		table.insert(platforms, {
 			platform = part,
 			transparency = part.Transparency,
-			releaseTransparency = utility.getConfig(fallingPlatform, "ReleaseTransparency", 0.8),
+			releaseTransparency = utility.getConfig(part, "ReleaseTransparency", 0.8),
 			ignoreCanCollide = utility.hasTag(part, "IgnoreCanCollide"),
+			ignoreTransparency = utility.hasTag(part, "IgnoreTransparency"),
+			invert = utility.hasTag(part, "Invert"),
 		})
+	end
+
+	local function togglePlatforms(toggle: boolean)
+		for _, platformData in platforms do
+			local isToggled = if platformData.invert then not toggle else toggle
+
+			if not platformData.ignoreTransparency then
+				platformData.platform.Transparency = if isToggled then platformData.transparency else platformData.releaseTransparency
+			end
+			if not platformData.ignoreCanCollide then --
+				platformData.platform.CanCollide = isToggled
+			end
+		end
 	end
 
 	local currentTrove = trove:Extend()
@@ -76,21 +91,9 @@ return function(scope: _T.Variables)
 		if hit ~= platform then return end
 		if debounce then return end
 		debounce = true
-
-		for _, platformData in platforms do
-			platformData.platform.Transparency = platformData.releaseTransparency
-
-			if platformData.ignoreCanCollide then continue end
-			platformData.platform.CanCollide = false
-		end
+		togglePlatforms(false)
 		reset(1.5)
-		for _, platformData in platforms do
-			platformData.platform.Transparency = platformData.transparency
-
-			if platformData.ignoreCanCollide then continue end
-			platformData.platform.CanCollide = true
-		end
-
+		togglePlatforms(true)
 		debounce = false
 	end)
 end

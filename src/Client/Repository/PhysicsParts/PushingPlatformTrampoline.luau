@@ -9,6 +9,14 @@ local CACHE_KEY = "pushing_platform_trampoline_cache"
 local LAUNCH_FORCE = 3
 local PRISMATIC_LIMIT = 0.2
 
+type Trampoline = {
+	force: Vector3,
+	launchForce: number,
+	vectorForce: VectorForce,
+	prismatic: PrismaticConstraint,
+	isLaunching: boolean,
+}
+
 return function(scope: _T.Variables)
 	local parent, trove, shared, utility = scope.parent, scope.trove, scope.shared, scope.utility
 	if not parent then return end
@@ -22,23 +30,13 @@ return function(scope: _T.Variables)
 	if not (prismatic and vectorForce) then return end
 
 	if shared[CACHE_KEY] == nil then
-		local cacheReference: {
-			[any]: {
-				force: Vector3,
-				launchForce: number,
-				vectorForce: VectorForce,
-				prismatic: PrismaticConstraint,
-				isLaunching: boolean,
-			},
-		} =
-			{}
-
+		local cacheReference: { [string]: Trampoline } = {}
 		shared[CACHE_KEY] = cacheReference
 
 		trove:Connect(runService.PreSimulation, function()
 			debug.profilebegin("Set PushingPlatformTrampoline Forces")
 
-			for id: any, data in cacheReference do
+			for id, data in cacheReference do
 				if not data.vectorForce:IsDescendantOf(workspace) then
 					cacheReference[id] = nil
 					continue
@@ -68,13 +66,15 @@ return function(scope: _T.Variables)
 
 	local finalForce = (Vector3.zAxis * totalMass)
 	vectorForce.Force = -finalForce
-	shared[CACHE_KEY][platformId] = {
+
+	local trampoline: Trampoline = {
 		force = finalForce,
 		launchForce = utility.getConfig(parent, "LaunchForce", LAUNCH_FORCE),
 		vectorForce = vectorForce,
 		prismatic = prismatic,
 		isLaunching = false,
 	}
+	shared[CACHE_KEY][platformId] = trampoline
 
 	local currentTrove = trove:Extend()
 	currentTrove:AttachToInstance(parent)
