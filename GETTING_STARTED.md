@@ -3,7 +3,6 @@
 
 First, you will need to install the following:
 - [Visual Studio Code](https://code.visualstudio.com/) (or your preferred IDE, though, you'll have to find the same plugins for your chosen IDE.)
-- [Rust](https://www.rust-lang.org/) (for terminal commands)
 - [Github Desktop](https://desktop.github.com/) (to clone the repository to be able to edit in VSC)
 
 

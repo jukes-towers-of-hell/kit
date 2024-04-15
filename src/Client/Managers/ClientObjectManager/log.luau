@@ -38,7 +38,7 @@ local _T = require(game:GetService("ReplicatedStorage").ClientTypes)
 
 return function(
 	scope: _T.Variables?,
-	str: string,
+	str: string | { string },
 	useTraceback: boolean?,
 	logType: (number | boolean | string)?,
 	printType: (number | string)?
@@ -58,8 +58,17 @@ return function(
 		startingString ..= `{if functionName ~= "" then `.{functionName}()` else ""} #{scriptLine}`
 	end
 
-	str = str:gsub("[^\n]+", function(currentString: string) return `\t\t\t > {currentString}` end)
+	local newStr = ""
+	if typeof(str) == "string" then
+		newStr = str
+	elseif typeof(str) == "table" then
+		for i, currentStr in str do
+			newStr ..= `{if i ~= 1 then "\n" else ""}{currentStr}`
+		end
+	end
+
+	newStr = newStr:gsub("[^\n]+", function(currentString: string) return `\t\t\t > {currentString}` end)
 
 	local currentPrintType: (string) -> () = printTypes[(printType or logType) :: any] or print -- or print
-	currentPrintType(`[{startingString}]:\n{str}`)
+	currentPrintType(`[{startingString}]:\n{newStr}`)
 end

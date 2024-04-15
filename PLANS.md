@@ -8,17 +8,20 @@
 
 ## Client Objects
 - [x] Base Client Objects (client objects w/o scripts)
-- [x] Conveyor (done, by @synnwave)
-- [x] Button/ButtonDeactivators (done, by @synnwave)
-- [x] Sequencer
-- [ ] idk
-- [ ] idk
-- [ ] idk
-- [ ] idk
-- [ ] idk
-- [ ] idk
-- [ ] idk
-
+- [x] Conveyor (@synnwave)
+- [x] Falling Platform (@synnwave)
+- [x] Pushing Platform Trampoline (@synnwave)
+- [x] Button/ButtonDeactivators (@synnwave)
+- [ ] Sequencer (@synnwave) (ALMOST DONE)
+- [x] Elevator (@synnwave)
+- [x] Teleporter (@synnwave)
+- [x] Keys (@synnwave)
+- [x] Property Changers (@synnwave)
+- [ ] Attachment parts (@synnwave)
+- [ ] Swings (@Gammaaaaa)
+- [ ] Ziplines (@Gammaaaaa)
+- [ ] Balloons (@Gammaaaaa)
+- add more stuff here latre 
 
 
 # PLANS

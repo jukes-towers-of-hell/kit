@@ -132,6 +132,14 @@ function manager:LoadClientObjects(clientObjectFolder: Folder, overrideRepositor
 					addToQueue(part.Value, part.Parent)
 				end
 			end
+
+			if part.Name == "ClientObjectScript" then
+				log(nil, {
+					"ClientObjectScripts are not supported in this kit version. Please switch to using the new Script Repository.",
+					"For more info, please read:<link>",
+					`Path: {part:GetFullName()}`,
+				}, false, "info", "warn")
+			end
 		end
 
 		if applySelf then

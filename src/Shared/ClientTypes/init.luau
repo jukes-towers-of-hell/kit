@@ -18,7 +18,7 @@ export type requestFunction = PackageTypes.requestFunction
 
 export type log<T> = (
 	self: T,
-	str: string,
+	str: string | { string },
 	useTraceback: boolean?,
 	logType: ("success" | "error" | "warn" | "info" | true | false | number)?,
 	printType: ("print" | "warn" | "error" | number)?

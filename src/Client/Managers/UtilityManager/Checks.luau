@@ -148,10 +148,33 @@ end
 		-- run code!
 	end))
 	```
+
+	You can also disable certain checks by passing in a table, shown here:
+	```lua
+	local allowedChecks = {
+		allowPlayer = true,
+		allowPushbox = true,
+		allowColorSpecific = false,
+		allowBalloons = false,
+		allowTurrets = false,
+	}
+
+	if not scope.utility.evaluateToucher(part, toucher, part, allowedChecks) then return end
+	```
 ]=]
-function util.evaluateToucher(part: BasePart, toucher: BasePart, config: Instance?): boolean
+
+local defaultChecks = {
+	allowPlayer = true,
+	allowPushbox = true,
+	allowColorSpecific = true,
+	allowBalloons = true,
+	allowTurrets = true,
+}
+function util.evaluateToucher(part: BasePart, toucher: BasePart, config: Instance?, checkConfig: typeof(defaultChecks)?): boolean
 	if not ((toucher and toucher:IsA("BasePart")) and toucher.Parent) then return false end
 	if not (part and part:IsA("BasePart")) then return false end
+
+	local allowedChecks = checkConfig or defaultChecks
 
 	local ancestor: Instance? = toucher.Parent.Parent
 	local humanoid: Humanoid? = toucher.Parent:FindFirstChildWhichIsA("Humanoid")
@@ -160,24 +183,17 @@ function util.evaluateToucher(part: BasePart, toucher: BasePart, config: Instanc
 
 	local configuration: Instance = config or part
 	local colorSpecificColor: Color3 = Utility.getConfig(configuration, "ColorSpecific", Utility.roundColor(part.Color))
-	local isColorSpecific = not (
-		Utility.hasTag(configuration, "ColorSpecific") and (Utility.roundColor(toucher.Color) ~= colorSpecificColor)
-	)
+	local isColorSpecific = allowedChecks.allowColorSpecific
+		and not (Utility.hasTag(configuration, "ColorSpecific") and (Utility.roundColor(toucher.Color) ~= colorSpecificColor))
 
-	local playersSupported = if config ~= nil
-		then (Utility.getConfig(configuration, "SupportPlayers", false) and playerTouched)
-		else playerTouched -- allow players to touch it no matter what if there is no config provided
-	local pushboxesSupported = (
-		Utility.getConfig(configuration, "SupportPushboxes", false)
-		and util.isPushbox(toucher)
-		and isColorSpecific
-	)
-	local balloonsSupported = (
-		Utility.getConfig(configuration, "SupportBalloons", false)
-		and util.isBalloon(toucher)
-		and isColorSpecific
-	)
-	local turretsSupported = (Utility.getConfig(configuration, "SupportTurrets", false) and util.isTurret(toucher) and isColorSpecific)
+	local playersSupported = allowedChecks.allowPlayer
+		and if config ~= nil then (Utility.getConfig(configuration, "SupportPlayers", false) and playerTouched) else playerTouched -- allow players to touch it no matter what if there is no config provided
+	local pushboxesSupported = allowedChecks.allowPushbox
+		and (Utility.getConfig(configuration, "SupportPushboxes", false) and util.isPushbox(toucher) and isColorSpecific)
+	local balloonsSupported = allowedChecks.allowBalloons
+		and (Utility.getConfig(configuration, "SupportBalloons", false) and util.isBalloon(toucher) and isColorSpecific)
+	local turretsSupported = allowedChecks.allowTurrets
+		and (Utility.getConfig(configuration, "SupportTurrets", false) and util.isTurret(toucher) and isColorSpecific)
 
 	return playersSupported or pushboxesSupported or balloonsSupported or turretsSupported
 end

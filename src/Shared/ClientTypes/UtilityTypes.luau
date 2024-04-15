@@ -9,7 +9,18 @@ export type Utility = {
 	checkConfig: (instance: Instance, configName: string) -> any,
 	getConfigChangedSignal: (instance: Instance, configName: string) -> RBXScriptSignal?,
 	hasTag: (instance: Instance, tag: string) -> boolean,
-	evaluateToucher: (part: BasePart, toucher: BasePart, config: Instance?) -> boolean,
+	evaluateToucher: (
+		part: BasePart,
+		toucher: BasePart,
+		config: Instance?,
+		checkConfig: {
+			allowPlayer: boolean?,
+			allowPushbox: boolean?,
+			allowColorSpecific: boolean?,
+			allowBalloons: boolean?,
+			allowTurrets: boolean?,
+		}?
+	) -> boolean,
 
 	-- Color Utility --
 	roundColor: (color: Color3) -> Color3,
