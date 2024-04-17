@@ -131,6 +131,14 @@ function util.isSequence(parent: Instance): boolean
 	return parent:FindFirstAncestor("Sequencer") ~= nil
 end
 
+local defaultChecks = {
+	allowPlayer = true,
+	allowPushbox = true,
+	allowColorSpecific = true,
+	allowBalloons = true,
+	allowTurrets = true,
+}
+
 --[=[
 	@within utility
 
@@ -162,14 +170,6 @@ end
 	if not scope.utility.evaluateToucher(part, toucher, part, allowedChecks) then return end
 	```
 ]=]
-
-local defaultChecks = {
-	allowPlayer = true,
-	allowPushbox = true,
-	allowColorSpecific = true,
-	allowBalloons = true,
-	allowTurrets = true,
-}
 function util.evaluateToucher(part: BasePart, toucher: BasePart, config: Instance?, checkConfig: typeof(defaultChecks)?): boolean
 	if not ((toucher and toucher:IsA("BasePart")) and toucher.Parent) then return false end
 	if not (part and part:IsA("BasePart")) then return false end

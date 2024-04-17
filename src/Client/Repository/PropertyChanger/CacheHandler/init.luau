@@ -295,8 +295,8 @@ handler.TYPE_HANDLERS = {
 				then currentValue + targetValue
 				elseif utility.hasTag(valueInstance, "Subtract") then currentValue - targetValue
 				elseif utility.hasTag(valueInstance, "Multiply") then currentValue * targetValue
-				elseif utility.hasTag(valueInstance, "Divide") then currentValue / targetValue
-				elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
+				elseif utility.hasTag(valueInstance, "Divide") then currentValue / targetValue				--elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
+
 				elseif utility.hasTag(valueInstance, "Abs") then targetValue:Abs()
 				elseif utility.hasTag(valueInstance, "Ceil") then targetValue:Ceil()
 				elseif utility.hasTag(valueInstance, "Floor") then targetValue:Floor()
@@ -310,7 +310,7 @@ handler.TYPE_HANDLERS = {
 			return if utility.hasTag(valueInstance, "Multiply")
 				then currentValue * targetValue
 				elseif utility.hasTag(valueInstance, "Divide") then currentValue / targetValue
-				elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
+				--elseif utility.hasTag(valueInstance, "FloorDivide") then currentValue // targetValue
 				else currentValue
 		end
 

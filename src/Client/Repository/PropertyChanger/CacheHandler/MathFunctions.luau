@@ -9,7 +9,7 @@ return {
 	Multiply = function(a, b) return a * b end,
 	FloorMultiply = function(a, b) return math.floor(a * b) end,
 	Divide = function(a, b) return a / b end,
-	FloorDivide = function(a, b) return a // b end,
+	--FloorDivide = function(a, b) return a // b end,
 	Power = function(a, b) return a ^ b end,
 	Modulo = function(a, b) return a % b end,
 

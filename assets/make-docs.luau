@@ -49,7 +49,8 @@ for _, currentScript in game:GetDescendants() do
 	local currentSource = currentScript.Source
 	if not currentSource:find(DOCS_TAG, 1, true) then continue end
 
-	local currentDoc = currentSource:match("%b[]"):sub(4, -3)
+	local currentDoc =
+		currentSource:match("%b[]"):sub(4, -3):gsub("{STATIC}", "../../static"):gsub("{RBX_ICON}", "../../static/rbx_vanilla_icons")
 	local docName = (currentSource:match(DOC_NAME_PATTERN) and currentSource:match(DOC_NAME_PATTERN):sub(2, -2))
 		or currentScript.Parent.Name
 

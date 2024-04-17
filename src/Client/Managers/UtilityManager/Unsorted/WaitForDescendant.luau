@@ -1,19 +1,19 @@
 --!strict
 
 -->insert-corescript-warning<--
+
+local SEARCH_INTERVAL = 0.05
+
 --[=[
 	@within utility
 	@param instance Instance
 	@param descendantName string -- the descendant to look for
-    @tag shorthand
+	@tag shorthand
 
-    Waits until the provided `descendantName` is found within the provided `instance`.
+	Waits until the provided `descendantName` is found within the provided `instance`.
 
-    
-    Shorthand of `instance:FindFirstChild(descendantName, true)`
+	Shorthand of `instance:FindFirstChild(descendantName, true)`
 ]=]
-
-local SEARCH_INTERVAL = 0.05
 local function WaitForDescendant(instance: Instance, descendantName: string, timeout: number?): Instance?
 	local descendant: Instance?
 	local startTime = os.clock()
