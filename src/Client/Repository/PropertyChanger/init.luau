@@ -140,7 +140,7 @@ return function(scope: _T.Variables)
 		if sequencerVariables then
 			for key, value in sequencerVariables do
 				if typeof(value) ~= "string" then continue end
-				if `$\{{key}}` ~= `$\{{currentTag}}` then continue end
+				if `${key}` ~= currentTag then continue end
 				currentTaggedObjects = tagHandler.getTagged(value)
 				break
 			end

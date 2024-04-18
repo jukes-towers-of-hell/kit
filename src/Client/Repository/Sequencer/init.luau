@@ -164,14 +164,17 @@ return function(scope: _T.Variables)
 	end
 
 	local debounce = false
+	local totalRuns = 0
 	local function sequenceWrapper(passedVariables: { [any]: any })
 		if debounce then return end
 		debounce = true
 		for loop = 1, loopAmount do
+			totalRuns += 1
 			passedVariables.Current = loop
+			passedVariables.RunTimes = totalRuns
 			runSequence(passedVariables)
 			sequenceFinished.Event:Wait()
-			if loopDelay > 0 then task.wait(loopDelay) end
+			if loopDelay > 0 then task.wait(if loopDelay < (1 / 75) then nil else loopDelay) end
 		end
 
 		if debounceTime > 0 then task.wait(debounceTime) end

@@ -24,7 +24,7 @@ local PART_BLACKLIST = {
 local ALLOWED_EVALUATION_CHECKS = {
 	allowPlayer = true,
 	allowPushbox = true,
-	allowColorSpecific = false,
+	allowColorSpecific = true,
 	allowBalloons = false,
 	allowTurrets = false,
 }
@@ -45,7 +45,6 @@ return function(scope: _T.Variables)
 	local transitionTime = utility.getConfig(configuration, "TransitionTime", 0)
 	local easingStyle = utility.getConfig(configuration, "EasingStyle", Enum.EasingStyle.Quad)
 	local easingDirection = utility.getConfig(configuration, "EasingDirection", Enum.EasingDirection.Out)
-	if seamlessTeleport then transitionTime = 0 end
 
 	local teleportingParts: { [BasePart]: boolean } = {}
 	local teleporterCooldowns: { [BasePart]: boolean } = {}
