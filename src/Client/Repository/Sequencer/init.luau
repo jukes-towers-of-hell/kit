@@ -80,7 +80,8 @@ return function(scope: _T.Variables)
 		}
 
 		if child:IsA("Model") and not child.PrimaryPart then
-			-- sometimes models without a primary part have a weird pivot.. i need to use GetBoundingBox to go around this but i feel like it's a bit jank.... awesome!
+			-- sometimes models without a primary part have a weird pivot..
+			-- i need to use GetBoundingBox to go around this but i feel like it's a bit jank....
 			currentData.point = (child:GetBoundingBox())
 		end
 
