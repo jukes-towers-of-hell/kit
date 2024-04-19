@@ -91,6 +91,7 @@ return function(scope: _T.Variables)
 	local buttonSound: Instance? = buttonPart:FindFirstChild("Press")
 	local debounce = false
 	local originalCFrame = buttonPart.CFrame
+	local originalMaterial = buttonPart.Material
 
 	updatePlatforms(false)
 	currentTrove:Connect(currentButton.Pressed:GetPropertyChangedSignal("Value"), function()
@@ -110,7 +111,7 @@ return function(scope: _T.Variables)
 
 		buttonPart.Material = if isPressed
 			then utility.getConfig(configurations, "PressedMaterial", Enum.Material.Neon)
-			else utility.getConfig(configurations, "UnpressedMaterial", Enum.Material.Metal)
+			else originalMaterial
 
 		if buttonPart.Anchored and (not utility.isSequence(button)) then
 			utility.tween(buttonPart, 1, { CFrame = if isPressed then (originalCFrame * finalPressOffset) else originalCFrame })
