@@ -5,8 +5,8 @@
 
 local manager = { hasInitialized = false }
 
-local tweenService: TweenService = game:GetService("TweenService")
-local lighting: Lighting = game:GetService("Lighting")
+local tweenService = game:GetService("TweenService")
+local lighting = game:GetService("Lighting")
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local _T = require(replicatedStorage.ClientTypes)
@@ -84,12 +84,14 @@ function manager:ChangeLighting(config: _T.LightingConfiguration)
 
 	local propertyTable = {}
 	for prop: string, value: any in currentConfiguration do
+		if not table.find(CONFIGURABLE_PROPS[config.Type], prop) then continue end
 		if typeof(value) == "string" or typeof(value) == "boolean" then
 			Utility.setInstanceProperty(lightingInstance, prop, value)
 			continue
 		end
 
-		propertyTable[prop] = value
+		local _, propertyExists = Utility.getInstanceProperty(lightingInstance, prop)
+		if propertyExists then propertyTable[prop] = value end
 	end
 
 	tweenService:Create(lightingInstance, currentTweenInfo, propertyTable):Play()
