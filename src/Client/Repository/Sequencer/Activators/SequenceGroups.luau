@@ -80,7 +80,7 @@ return {
 			end
 
 			for _, thread in currentThreads do
-				task.cancel(thread)
+				pcall(task.cancel, thread)
 			end
 
 			currentThreads = nil :: any

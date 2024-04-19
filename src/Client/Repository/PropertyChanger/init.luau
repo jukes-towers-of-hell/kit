@@ -48,7 +48,7 @@ return function(scope: _T.Variables)
 		if propertyName:find("|") then -- sort properties , example: "1 | Size"
 			local split = propertyName:split("|")
 			sort = tonumber(split[1]:match("%d+")) or sort
-			propertyName = (split[2]:gsub("%s", ""))
+			propertyName = split[2]:gsub("%s", "")
 		end
 
 		local currentValue
