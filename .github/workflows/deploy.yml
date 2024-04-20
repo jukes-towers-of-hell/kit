@@ -16,6 +16,6 @@ jobs:
         run: lune run build.luau true
 
       - name: Deploy project
-        run: rbxcloud experience publish -a "$API_KEY" -u 5628492917 -p 16315273730 -t published -f kit.rbxl
         env:
           API_KEY: ${{ secrets.OPENCLOUD }}
+        run: rbxcloud experience publish -a "$API_KEY" -u 5628492917 -p 16315273730 -t published -f kit.rbxl
