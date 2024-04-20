@@ -17,7 +17,5 @@ jobs:
 
       - name: Deploy project
         env:
-          UID: 5628492917  # Universe ID
-          PID: 16315273730 # Place ID
-          API_KEY: ${{ secrets.OPENCLOUD }} 
-        run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f kit.rbxl
+          API_KEY: ${{ secrets.OPENCLOUD }}
+        run: rbxcloud experience publish -a "$API_KEY" -u 5628492917 -p 16315273730 -t published -f kit.rbxl
