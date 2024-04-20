@@ -84,11 +84,6 @@ return function(FILE_NAME: string, doNotRequest: string?)
 
 			local finalSource = currentScript.Source
 			for warningKey, warningMessage in WARNING_MESSAGES do
-				if warningKey == "%-%->insert%-docs%-warning<%-%-" and finalSource:find(warningKey) then
-					finalSource = `{warningMessage}\nreturn nil`
-					continue
-				end
-
 				finalSource = finalSource:gsub(warningKey, warningMessage)
 			end
 

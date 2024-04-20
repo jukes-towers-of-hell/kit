@@ -18,5 +18,4 @@ wally.lock
 /.vscode
 .env
 .build
-/docs
 /build

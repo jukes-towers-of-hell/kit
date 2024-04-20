@@ -23,18 +23,12 @@ local function linePrint(str: string, lineCount: number?) ----------- cool looki
 	return print(`{string.rep("-", dashRepeats)} {str} {string.rep("-", dashRepeats + includeExtraCharacterIfStringIsUneven)}`)
 end
 
--- aftman
-write(color("blue"))
-linePrint("AFTMAN")
-write(color("reset"))
-spawn("aftman", { "install" }, { shell = true })
-
 -- wally
 write(color("blue"))
 linePrint("WALLY")
 write(color("reset"))
 spawn("wally", { "install" }, shellParams)
-spawn("wally-patch-package", {  }, shellParams)
+spawn("wally-patch-package", {}, shellParams)
 
 -- build rojo
 write(color("blue"))
