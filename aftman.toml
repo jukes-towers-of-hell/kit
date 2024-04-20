@@ -3,8 +3,8 @@
 
 # To add a new tool, add an entry to this table.
 [tools]
-lune = "lune-org/lune@0.8.2"
-rbxcloud = "Sleitnick/rbxcloud@0.6.1"
+lune = "lune-org/lune@0.8.3"
+rbxcloud = "Sleitnick/rbxcloud@0.10.0"
 rojo = "rojo-rbx/rojo@7.4.1"
 selene = "Kampfkarren/selene@0.26.1"
 stylua = "johnnymorganz/stylua@0.20.0"
