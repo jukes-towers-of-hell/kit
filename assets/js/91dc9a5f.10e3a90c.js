@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[153],{63891:s=>{s.exports=JSON.parse('{"sourceUrl":"https://github.com/synnwave/jtoh-kit-overhaul/blob/main","baseUrl":"/kit/","classOrder":[{"classes":["utility"],"collapsed":false,"section":"Scope"}],"apiCategories":[]}')}}]);
