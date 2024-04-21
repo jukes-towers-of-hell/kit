@@ -70,13 +70,15 @@ return function(scope: _T.Variables)
 			if descendant.Name == "Activated" and descendant:IsA("BoolValue") then descendant.Value = isActivated end
 			if utility.hasTag(descendant, "IgnoreAll") then continue end
 			for objectType, property in TWEEN_TRANSPARENCY_PROPERTIES do
-				if descendant:IsA(objectType) then
+				if descendant:IsA(objectType) and not utility.hasTag(descendant, "IgnoreTransparency") then
 					utility.tween(descendant, 0.3, { [property] = getTransparency(descendant, isActivated) })
 				end
 			end
 
 			for _, objectType: string in SET_PROPERTIES_ENABLED do
-				if descendant:IsA(objectType) then (descendant :: any).Enabled = isActivated end
+				if descendant:IsA(objectType) and not utility.hasTag(descendant, "IgnoreEnabled") then
+					utility.setInstanceProperty(descendant, "Enabled", isActivated)
+				end
 			end
 		end
 
