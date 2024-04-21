@@ -15,7 +15,7 @@ manager.VALID_DAMAGEBRICKS = { -- NOTE: Maybe change this to numbers instead of 
 	double = "DoubleDamage",
 	ouch = "HighDamage",
 	instakills = "Instakill",
-	heals = 0,
+	heals = "Heals",
 } :: { [string]: string | number }
 
 local LOCAL_PLAYER_COLLISIONGROUP = "Player"

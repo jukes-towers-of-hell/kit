@@ -38,6 +38,11 @@ hash = "32224eeb0d14fc63ace3772cef73318d024e16884c23db430d5cccaed2cc5532"
 id = 16324487413
 packable = false
 
+[inputs."assets/kit_assets/textures/heart.png"]
+hash = "222978b1bfa4644a659b13591657d101379a33f8c47b6c2bb50c019258dc5aaf"
+id = 17229527213
+packable = false
+
 [inputs."assets/kit_assets/textures/killbricks/double.png"]
 hash = "968bb17c23a2b6e3f6e28125612b0d7099844bfa8625aa416fbae0665d0ea758"
 id = 16281097673

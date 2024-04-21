@@ -12,6 +12,7 @@ return {
 			down_arrow = "rbxassetid://16350606160",
 			forcefield_circle = "rbxassetid://16281097587",
 			gradient = "rbxassetid://16324487413",
+			heart = "rbxassetid://17229527213",
 			killbricks = {
 				double = "rbxassetid://16281097673",
 				kills = "rbxassetid://16281097791",

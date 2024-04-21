@@ -17,6 +17,11 @@
       "$ignoreUnknownInstances": true,
       "$path": "src/Shared"
     },
+    "StarterPack": {
+      "$className": "StarterPack",
+      "$ignoreUnknownInstances": true,
+      "$path": "src/StarterPack"
+    },
     "Lighting": {
       "$className": "Lighting",
       "$properties": {
