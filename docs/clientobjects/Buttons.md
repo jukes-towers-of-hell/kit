@@ -43,6 +43,7 @@ The number of decimal places shown on the button's timer. Only works when [Timer
 Default value: 0
 
 Types:
+* number
 * integer
 
 ---
@@ -51,15 +52,7 @@ Types:
 The custom text for the button's timer. `temporary special character` will be replaced with the timer value.
 
 Types:
-* TextLabel
-
-Tags:
-* `DefaultColor`
-  * text color matches the button part
-  * stroke color is the text color inverted
-* `AlternativeDefaultColor`
-  * text color matches the button part
-  * stroke color is the text color subtracted by 0.5
+* string
 
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) HideGUI
