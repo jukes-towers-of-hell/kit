@@ -4,7 +4,7 @@
 ---
 ### ![](../../static/rbx_vanilla_icons/NumberValue.png)![](../../static/rbx_vanilla_icons/Vector3Value.png)![](../../static/rbx_vanilla_icons/CFrameValue.png) ButtonPressOffset
 
-This configuration determines the offset that the button moves once it is pressed.
+The offset of the button once it is pressed.
 
 Default value: 0.75
 
@@ -12,10 +12,11 @@ Types:
 * number
 * Vector3
 * CFrame
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) PressedMaterial
 
-This configuration determines the material of the button once it is pressed.
+The material of the button once it is pressed.
 
 Default value: Neon
 
@@ -26,8 +27,8 @@ Types:
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) Timer
 
-This configuration determines how long the button will stay pressed.
-Will only work if the value is above 0.
+How many seconds the button will stay pressed.
+Only works if the value is above 0.
 
 Default value: 0
 
@@ -37,14 +38,36 @@ Types:
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) DecimalPlaces
 
+The number of decimal places shown on the button's timer. Only works when [Timer](#-timer) is active.
+
+Default value: 0
+
+Types:
+* integer
 
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) TimerText
 
+The custom text for the button's timer. `temporary special character` will be replaced with the timer value.
+
+Types:
+* TextLabel
+
+Tags:
+* `DefaultColor`
+  * text color matches the button part
+  * stroke color is the text color inverted
+* `AlternativeDefaultColor`
+  * text color matches the button part
+  * stroke color is the text color subtracted by 0.5
 
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) HideGUI
 
+Whether the button timer will be visible.
+
+Types:
+* boolean
 
 ---
 
@@ -55,18 +78,64 @@ Types:
 
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) SetTransparency
+
+The transparency of the instance when it is enabled.
+
+Default value: 0
+
+Types:
+* number
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) FullHide
+
+Hides the instance when it is disabled.
+
+Types:
+* tag
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) Invert
+
+Makes the instance enabled by default and disabled on button press.
+
+Types:
+* tag
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) ColorOverride
+
+Overrides the button color that will activate the instance.
+
+Types:
+* Color3
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) IgnoreCanCollide
+
+Prevents the instance's CanCollide property from being changed by buttons.
+Only works if the instance is a BasePart.
+
+Types:
+* tag
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) IgnoreTransparency
+
+Prevents the instance's Transparency property from being changed by buttons.
+
+Types:
+* tag
+
 ---
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) IgnoreAll
 
-help
+A combination of IgnoreCanCollide and IgnoreTransparency.
+
+Types:
+* tag
+
+---
+
+help x2
 
