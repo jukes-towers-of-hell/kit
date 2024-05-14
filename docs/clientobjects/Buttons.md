@@ -6,11 +6,10 @@
 
 ### ![](../../static/rbx_vanilla_icons/NumberValue.png)![](../../static/rbx_vanilla_icons/Vector3Value.png)![](../../static/rbx_vanilla_icons/CFrameValue.png) ButtonPressOffset
 
-This configuration determines the offset (in studs) that the button moves once it is pressed.
+Determines the offset (in studs) that the ButtonPart moves when pressed. This offset is relative to the ButtonPart's orientation.
 
-- If a number, determines the offset in the negative Y axis relative to the button
-- If a Vector3, determines the offset on all axes relative to the button.
-- If a CFrame, determines the offset and orientation on all axes relative to the button.
+- A number type will offset the ButtonPart on the negative Y axis.
+- A Vector3 and CFrame type will offset the ButtonPart move on all axes (with CFrame also supporting an orientation offset).
 
 Default value: 0.75
 
@@ -24,7 +23,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) PressedMaterial
 
-The material of the button once it is pressed.
+The material of the button when pressed.
 
 Default value: Neon
 
@@ -50,7 +49,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/NumberValue.png) DecimalPlaces
 
-The number of decimal places shown on the button's timer. Only works when [Timer](#-timer) is active.
+The number of decimal places shown on the button's [timer](#-timer) (if enabled).
 
 Default value: 0
 
@@ -62,7 +61,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/StringValue.png) TimerText
 
-The custom text for the button's timer. Any backticks (`) will be replaced with the button timer. Leaving this blank will show the button's timer.
+Overwrites the button timer with custom text. Any backticks (`) are replaced with the button timer.
 
 Types:
 
@@ -72,7 +71,9 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) HideGUI
 
-Whether the button timer (both on-screen and on the button) will be visible.
+Hides the button timer (both on-screen and on the ButtonPart).
+
+Default value: false
 
 Types:
 
@@ -86,7 +87,8 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/NumberValue.png) SetTransparency
 
-This configuration determines the button platform's transparency when activated. Also works for individual descendants of the button platform.
+The button platform's transparency when activated.
+Can also be added to descendants of button platforms (which have their transparency changed by buttons).
 
 Default value: 0
 
@@ -98,7 +100,8 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) FullHide
 
-This configuration makes button platforms fully transparent when not activated. Also works for individual descendants of the button platform.
+Makes button platform transparency 1 instead of 0.6 when not activated. **Does not affect** its descendants.
+Can also be added to descendants of button platforms (which have their transparency changed by buttons).
 
 Types:
 
@@ -108,7 +111,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) Invert
 
-This configuration inverts a button platform's default state, making it activated by default. This also affects all of its descendants (which can be altered by buttons).
+Inverts a button platform's state, making it active by default. Also affects all of its descendants (which are altered by buttons).
 
 Types:
 
@@ -118,7 +121,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) ColorOverride
 
-This configuration overrides the color of the button platform, making it affected by buttons of the configuration's color instead of the platform's color.
+Overrides the color of the button platform, making it affected by buttons of the configuration's color instead of the platform's color.
 
 Types:
 
@@ -128,8 +131,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) IgnoreCanCollide
 
-This configuration makes a button platform's CanCollide property not affected by its state.
-Only works if the instance is a BasePart.
+Makes a button platform's state not affect its collision.
 
 Types:
 
@@ -139,7 +141,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) IgnoreTransparency
 
-This configuration makes a button platform's Transparency property not affected by its state. This does not apply to the platform's descendants.
+Makes a button platform's state not affect its transparency. **Does not affect** the platform's descendants.
 
 Types:
 
@@ -149,7 +151,7 @@ Types:
 
 ### ![](../../static/rbx_vanilla_icons/BoolValue.png) IgnoreAll
 
-A combination of IgnoreCanCollide and IgnoreTransparency.
+A combination of [IgnoreCanCollide](#-ignorecancollide) and [IgnoreTransparency](#-ignoretransparency).
 
 Types:
 
@@ -157,4 +159,4 @@ Types:
 
 ---
 
-help x2
+help x3
