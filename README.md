@@ -1,6 +1,8 @@
 # IMPORTANT NOTE:
 
-This kit is currently in beta. Help
+## THE PROJECT IS CURRENTLY PAUSED! PROGRESS WILL RETURN SOON (~Autumn 2024)
+
+This kit is currently in beta. Do not build towers using the kit.
 
 # jtoh-kit-overhaul
 
