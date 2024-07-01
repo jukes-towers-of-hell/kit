@@ -12,6 +12,8 @@ local playerGui = localPlayer:WaitForChild("PlayerGui") :: PlayerGui
 local handleCache = require(script.CacheHandler)
 type Button = handleCache.Button
 
+local textReplaceChar = "`"
+
 return function(scope: _T.Variables)
 	local button, trove, shared, utility, communicators = scope.parent, scope.trove, scope.shared, scope.utility, scope.communicators
 	if not button then return end
@@ -139,7 +141,7 @@ return function(scope: _T.Variables)
 		local currentLabel = timerTextLabel:Clone()
 		currentLabel.Parent = surfaceGui
 		currentLabel.TextColor3, currentLabel.TextStrokeColor3 = getTimerColor()
-		currentLabel.Text = if textOverride then textOverride:gsub(textOverride, tostring(buttonTimer)) else tostring(buttonTimer)
+		currentLabel.Text = if textOverride then textOverride:gsub(textReplaceChar, tostring(buttonTimer)) else tostring(buttonTimer)
 
 		surfaceGui.Parent = buttonPart
 		local guiHidden = utility.checkConfig(configurations, "HideGUI")
@@ -168,7 +170,7 @@ return function(scope: _T.Variables)
 
 			if guiHidden then return end
 			local displayTime = string.format(`%0.{decimalPlaces}f`, elapsedTime)
-			currentLabel.Text = if textOverride then textOverride:gsub(textOverride, displayTime) else displayTime
+			currentLabel.Text = if textOverride then textOverride:gsub(textReplaceChar, displayTime) else displayTime
 		end)
 	end)
 
